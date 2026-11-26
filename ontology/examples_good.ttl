@@ -1,0 +1,56 @@
+@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################################
+# 合规实例：一条完整的「评估 -> 证据 -> 偏离 -> 方案 -> 技能」链路
+#
+# 数据取自 B 交付包里的真实样例 Es2-467acf3acb6a8191d6ef（专家组，1664 帧，cTS 45）。
+# 这份文件同时是答辩时的演示素材：点开任意一个结论，都能顺着链问回到论文和代码行。
+##############################################################################
+
+# ---------- 一次评估 ----------
+kimore:assessment_EID1_Es2 a kimore:Assessment ;
+    kimore:assessedExercise kimore:exercise_Es2 ;
+    kimore:hasDataset kimore:dataset_kimore ;
+    kimore:observedLabelPresent true ;
+    kimore:qualityStatus "ok" ;
+    kimore:version "1.0" ;
+    rdfs:label "E_ID1 / Es2 / 1664 帧"@zh .
+
+# ---------- 参照分布（数据集内相对描述，不是临床常模）----------
+kimore:ref_es2_left_range a kimore:ReferenceDistribution ;
+    kimore:version "1.0" ;
+    rdfs:label "Es2 左侧躯干倾角活动范围 · 其余 71 名受试者"@zh .
+
+# ---------- 证据 ----------
+kimore:evidence_left_range a kimore:Evidence ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    rdfs:label "左侧躯干倾角活动范围的定义与计算方式见论文与 feat_extract_Ex2.m:60-62"@zh .
+
+# ---------- 偏离项 ----------
+kimore:dev_left_range_high a kimore:Deviation ;
+    kimore:aboutFeature kimore:feature_torso_tilt_left_range ;
+    kimore:derivedFromAssessment kimore:assessment_EID1_Es2 ;
+    kimore:comparedTo kimore:ref_es2_left_range ;
+    kimore:supportedBy kimore:evidence_left_range ;
+    kimore:confidence "0.78"^^xsd:decimal ;
+    kimore:version "1.0" ;
+    rdfs:label "左侧躯干活动范围 37.5°，高于同组多数记录"@zh .
+
+# ---------- 训练方案 ----------
+kimore:plan_EID1_next a kimore:Plan ;
+    kimore:addresses kimore:dev_left_range_high ;
+    kimore:notProvided "不做诊断" ;
+    kimore:notProvided "不评价疗效" ;
+    kimore:notProvided "不给出处方或用药建议" ;
+    kimore:version "1.0" ;
+    rdfs:label "下次训练：Es2 负重减轻、控制侧倾速度，完成 5 次后复测"@zh .
+
+# ---------- 技能 ----------
+kimore:skill_s2_assess a kimore:Skill ;
+    kimore:allowedTool kimore:tool_assess_exercise ,
+                     kimore:tool_query_criteria ,
+                     kimore:tool_explain_deviation ;
+    kimore:version "1.0" ;
+    rdfs:label "S2 评动作：调用评估工具并把 17 个特征翻译成人话"@zh .

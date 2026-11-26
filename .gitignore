@@ -1,0 +1,45 @@
+# 数据（不进 Git）
+data/
+Kimore/
+*.csv
+!mcp_server/fixtures/*.json
+*.avi
+*.mp4
+*.xlsx
+!eval/*.xlsx
+
+# 密钥与本地配置
+.env
+.env.*
+!.env.example
+deploy/env/.env
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# 运行产物
+*.log
+logs/
+reports/*.png
+volumes/
+*.db
+.ipynb_checkpoints/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 打包产物（Release 里发布，不进仓库历史）
+dist/*.zip
+!skills/dist/*.zip
+*.tar.gz

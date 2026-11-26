@@ -1,0 +1,34 @@
+# 只起「腰衡」的 MCP 服务，不碰 Nexent 自己的 compose。
+# Nexent 请按官方 deploy.sh 部署；这里额外起一个容器，把 9100 暴露给 Nexent。
+#
+#   docker compose -f mcp_server/compose.yml up -d --build
+#   curl -N http://127.0.0.1:9100/sse      # 能看到 event: endpoint 就对了
+#
+# 默认用仓库内的 fixtures（10 个真实工具返回样例），不需要任何数据即可启动。
+
+services:
+  mcp-kimore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: yaoheng/mcp-kimore:0.1.0
+    container_name: mcp-kimore
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      # 想把 fixtures 换成自己录制的响应：改这里即可
+      - "./fixtures:/app/fixtures:ro"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket,sys; s=socket.socket(); s.settimeout(3); sys.exit(0 if s.connect_ex(('127.0.0.1',9100))==0 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

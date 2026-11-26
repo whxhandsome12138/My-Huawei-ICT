@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  mcp-selfcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        working-directory: mcp_server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Start MCP server
+        working-directory: mcp_server
+        run: |
+          nohup python server.py --host 127.0.0.1 --port 9100 > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if python -c "import socket,sys;s=socket.socket();s.settimeout(1);sys.exit(0 if s.connect_ex(('127.0.0.1',9100))==0 else 1)"; then
+              echo "server up"; break
+            fi
+            sleep 1
+          done
+          cat server.log || true
+      - name: Run 17-point selfcheck
+        working-directory: mcp_server
+        run: python selfcheck.py --port 9100
+
+  ontology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: |
+          pip install rdflib pyshacl
+      - name: Validate SHACL (good must pass, bad must fail)
+        run: python tools/validate_ontology.py
+
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild demo page (fixtures -> index.html)
+        run: |
+          python demo/build_demo.py
+          python - <<'PY'
+          import pathlib
+          p = pathlib.Path("demo/index.html")
+          assert p.exists() and p.stat().st_size > 20000, "index.html 太小，可能没生成"
+          print("demo ok", p.stat().st_size, "bytes")
+          PY

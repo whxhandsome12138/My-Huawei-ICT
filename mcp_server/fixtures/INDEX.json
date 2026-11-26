@@ -1,0 +1,102 @@
+{
+  "server": "exercise-assessment-kimore",
+  "transport": "sse",
+  "note": "由真实服务导出的原始响应，未经改写；数据为 KIMORE 历史记录的计算结果。",
+  "examples": [
+    {
+      "file": "real_list_samples.json",
+      "tool": "list_samples",
+      "arguments": {
+        "limit": 5
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 1495
+    },
+    {
+      "file": "real_assess_success.json",
+      "tool": "assess_exercise",
+      "arguments": {
+        "sample_id": "Es2-467acf3acb6a8191d6ef"
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 7756
+    },
+    {
+      "file": "real_assess_observed_label.json",
+      "tool": "assess_exercise",
+      "arguments": {
+        "sample_id": "Es2-467acf3acb6a8191d6ef",
+        "mode": "observed_label"
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 1420
+    },
+    {
+      "file": "real_explain_deviation.json",
+      "tool": "explain_deviation",
+      "arguments": {
+        "sample_id": "Es2-467acf3acb6a8191d6ef"
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 2410
+    },
+    {
+      "file": "real_query_criteria.json",
+      "tool": "query_criteria",
+      "arguments": {
+        "exercise_id": "Es2"
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 6791
+    },
+    {
+      "file": "real_plan_session.json",
+      "tool": "plan_session",
+      "arguments": {
+        "sample_ids": [
+          "Es2-467acf3acb6a8191d6ef",
+          "Es2-fbab3ba3e46a4ea94233"
+        ]
+      },
+      "status": "ok",
+      "code": null,
+      "bytes": 2054
+    },
+    {
+      "file": "real_error_sample_not_found.json",
+      "tool": "assess_exercise",
+      "arguments": {
+        "sample_id": "Es2-ffffffffffffffffffff"
+      },
+      "status": "error",
+      "code": "SAMPLE_NOT_FOUND",
+      "bytes": 824
+    },
+    {
+      "file": "real_error_invalid_argument.json",
+      "tool": "assess_exercise",
+      "arguments": {
+        "sample_id": "../../Kimore"
+      },
+      "status": "error",
+      "code": "INVALID_ARGUMENT",
+      "bytes": 865
+    },
+    {
+      "file": "real_error_model_unavailable.json",
+      "tool": "assess_exercise",
+      "arguments": {
+        "sample_id": "Es2-467acf3acb6a8191d6ef",
+        "mode": "baseline_prediction"
+      },
+      "status": "error",
+      "code": "MODEL_UNAVAILABLE",
+      "bytes": 845
+    }
+  ]
+}

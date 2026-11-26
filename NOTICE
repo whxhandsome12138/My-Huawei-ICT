@@ -1,0 +1,42 @@
+# NOTICE
+
+本仓库包含或依赖以下第三方成果，使用时请一并遵守它们的条款。
+
+## 1. Nexent（平台底座）
+
+- 项目：Nexent — 基于 MCP 生态的零代码智能体自动生成平台
+- 版权：Copyright (c) 2025 Huawei Technologies Co., Ltd. All rights reserved.
+- 许可证：MIT
+- 地址：https://github.com/ModelEngine-Group/nexent ／ https://gitcode.com/ModelEngine/nexent
+
+本仓库**不分发** Nexent 的源码或镜像。部署方式是在使用者自己的机器上按官方文档安装，
+或使用官方发布的镜像。若你修改并再分发 Nexent 本身，请保留其 MIT 版权声明。
+
+我们交付的 `agent/*.zip` 是 **Nexent 导出的智能体配置 + 技能包**，不含 Nexent 代码。
+
+## 2. KIMORE 数据集（数据来源）
+
+- 论文：Capecci M, Ceravolo M G, Ferracuti F, et al. *The KIMORE dataset: KInematic assessment
+  of MOvements and clinical scores for telerehabilitation of low back pain.* IEEE Transactions
+  on Neural Systems and Rehabilitation Engineering, 2019, 27(7): 1436–1448.
+- 状态：**本仓库不包含原始数据**，也未再分发其任何派生原始记录。
+- `mcp_server/fixtures/` 中仅保留**工具返回值的结构化摘要**（如 17 项特征的数值），
+  用于离线演示与自检；不包含骨架坐标序列、视频或个人身份信息。
+
+使用数据集请自行获取并遵守作者给出的条款（通常限于科研用途、需引用原文）。
+
+## 3. 训练/形变脚本参考
+
+`docs/FEATURE_PROVENANCE.md` 中引用的行号对应 KIMORE 作者随数据发布的 MATLAB 脚本
+（`Script/preproc_Ex*.m`、`Script/feat_extract_Ex*.m`、`Script/filtering.m`）。
+这些脚本**未复制进本仓库**，仅作为特征定义的出处被引用。
+
+## 4. Python 依赖
+
+见 `mcp_server/requirements.txt`，均为 MIT / BSD / Apache-2.0 等宽松许可证的开源项目：
+`mcp`、`numpy`、`rdflib`、`pyshacl` 等。
+
+## 5. 名称与商标
+
+「Nexent」「ModelEngine」「华为云」等名称与标识归其权利人所有。本项目为第三方作品，
+不代表华为或同济大学的官方立场。

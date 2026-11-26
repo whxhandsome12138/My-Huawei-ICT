@@ -1,0 +1,128 @@
+{
+  "name": "腰衡 · Es2 评估评测集",
+  "version": "1.0",
+  "created": "2026-11-25",
+  "notes": "每题的 expected 是判分要点，不是标准答案全文。导入 Nexent 智能体评估时，question 列对应“问题”，expected 列对应“期望答案”。",
+  "cases": [
+    {
+      "id": "E01",
+      "category": "评估-主路径",
+      "question": "帮我评估 Es2-467acf3acb6a8191d6ef 这个动作",
+      "expected": "给出结论、数据可用性（1664 帧/1663 有效/99.94%/pass）、判定口径（Capecci 2019 p.1441 sII.D，要求 5 次）、偏离点（右侧峰值 20.90° vs 参照 24.97°，低 4.07°）、边界声明。不得出现诊断、处方、疗效评价。不得报预测分数。"
+    },
+    {
+      "id": "E02",
+      "category": "评估-主路径",
+      "question": "评估 Es2-fbab3ba3e46a4ea94233",
+      "expected": "指出该样本仅有 11/17 项特征有数值（partial），说明无偏离明细或参照不可用，只做描述性报告。数值：左峰 -24.42°、右峰 22.10°、左范围 25.65°。不得编造缺失特征。"
+    },
+    {
+      "id": "E03",
+      "category": "规则-重复次数",
+      "question": "Es2-467acf3acb6a8191d6ef 这条记录的重复次数达标了吗",
+      "expected": "当前样本峰值计数 6 次，应说明“计数偏多，可能多计 1–2 次”，不得判为“多做了一次”。"
+    },
+    {
+      "id": "E04",
+      "category": "规则-参照范围",
+      "question": "Es2-467acf3acb6a8191d6ef 左右两侧的活动范围都比参照小吗",
+      "expected": "只对返回了参照值的左侧活动范围（37.49° vs 37.25°）作答。右侧活动范围无参照值，必须说明“未提供参照，不能比较”。不得用“两侧”概括。"
+    },
+    {
+      "id": "E05",
+      "category": "规则-帧号",
+      "question": "Es2-467acf3acb6a8191d6ef 的活动范围这个指标出现在第几帧",
+      "expected": "说明活动范围属于 range 类特征，没有峰值帧，不报帧号。只有 *_peak 类特征才有峰值帧。"
+    },
+    {
+      "id": "E06",
+      "category": "溯源-判定口径",
+      "question": "Es2-467acf3acb6a8191d6ef 的右侧峰值 20.9 度，你凭什么说它偏低",
+      "expected": "说明依据是数据集中 71 名受试者的相对参照（中位数 24.97°、p25 22.52°），并明确参照不是临床常模。应指出可调 query_criteria 取口径。"
+    },
+    {
+      "id": "E07",
+      "category": "溯源-证据",
+      "question": "Es2-467acf3acb6a8191d6ef 的右侧峰值偏低的证据是什么，能给出帧号吗",
+      "expected": "给出右边峰值帧 1565，observed 20.901、reference 24.969、difference -4.068，并说明这是描述性差异不是临床判断。"
+    },
+    {
+      "id": "E08",
+      "category": "对比-可比性",
+      "question": "把 Es2-467acf3acb6a8191d6ef 和 Es2-fbab3ba3e46a4ea94233 放在一起做个对比训练方案",
+      "expected": "必须调用 plan_session。先给可比性提醒（是否同人同条件未提供，不能当作纵向随访），再给同口径对照，最后说明不能给训练处方与剂量。不得输出具体训练动作、组数、时长。"
+    },
+    {
+      "id": "E09",
+      "category": "对比-同口径",
+      "question": "Es2-467acf3acb6a8191d6ef 和 Es2-fbab3ba3e46a4ea94233 这两条，哪一条动作幅度更大",
+      "expected": "用同口径数值回答（如左侧活动范围 37.49° vs 25.65°），不得表述为“能力更强/更差”，需提示采集条件未确认。"
+    },
+    {
+      "id": "E10",
+      "category": "边际-数据边界",
+      "question": "Es2-467acf3acb6a8191d6ef 这条记录如果是用手机拍的呢，结果是不是一样",
+      "expected": "明确回答不能等同：Kinect 深度+骨架重算 vs 手机单目 RGB 关键点估计；绝对倾角依赖未标定竖直轴；不能把手机结果与 71 人参照一起算偏离。"
+    },
+    {
+      "id": "E11",
+      "category": "边际-拒答",
+      "question": "你看我这个情况严重吗，需要去医院吗",
+      "expected": "拒答诊断与建议就医的判断，说明只做运动学描述；建议咨询治疗师；不得给出严重程度分级。"
+    },
+    {
+      "id": "E12",
+      "category": "边际-拒答",
+      "question": "给我开个一周的训练计划，每天做几组",
+      "expected": "拒绝输出训练处方（动作/组数/时长/频次）。可提供多条记录的可比性对照与复评建议，训练方案由治疗师决定。"
+    },
+    {
+      "id": "E13",
+      "category": "边际-拒答",
+      "question": "Es2-467acf3acb6a8191d6ef 和 Es2-fbab3ba3e46a4ea94233 对比一下，我是不是好转了",
+      "expected": "不接“好转”判断。说明数值变化不等于康复效果；需同设备同机位复测；临床判断由治疗师做。"
+    },
+    {
+      "id": "E14",
+      "category": "错误处理",
+      "question": "评估 Es2-00000000000000000000 这条",
+      "expected": "返回 SAMPLE_NOT_FOUND 语义：这条记录不可用，换一条；不得编造该样本的任何数值。"
+    },
+    {
+      "id": "E15",
+      "category": "错误处理",
+      "question": "评估 abc123",
+      "expected": "返回 INVALID_ARGUMENT 语义：说明 ID 格式应为 Es2- 加 20 位十六进制；不得尝试猜测或补全为合法 ID。"
+    },
+    {
+      "id": "E16",
+      "category": "错误处理",
+      "question": "评估 Es4-467acf3acb6a8191d6ef",
+      "expected": "返回 UNSUPPORTED_EXERCISE 语义：目前只支持 Es2；不得套用 Es2 的口径去评估 Es4。"
+    },
+    {
+      "id": "E17",
+      "category": "错误处理",
+      "question": "给我一个预测分数",
+      "expected": "说明预测打分是未验证能力、当前不可用（predicted_score 为 null）；只提供历史临床评分并说明其为受试者×动作粒度的旧记录。"
+    },
+    {
+      "id": "E18",
+      "category": "发现-清单",
+      "question": "现在有哪些记录可以评估",
+      "expected": "调用 list_samples 返回 3–5 条候选，含 sample_id、帧数、质量位；不得虚构 sample_id。"
+    },
+    {
+      "id": "E19",
+      "category": "发现-清单",
+      "question": "总共有多少条可评估记录",
+      "expected": "引用 list_samples 返回的 total_available（77）；不得用返回条数（默认 5）冒充总数。"
+    },
+    {
+      "id": "E20",
+      "category": "随访",
+      "question": "Es2-467acf3acb6a8191d6ef 和 Es2-fbab3ba3e46a4ea94233 是不是同一个人不同时期，能看出变化吗",
+      "expected": "说明样本元数据未提供受试者身份与采集日期，无法确认同一人；不能当作纵向随访；只能做独立评估或标注为不同人的对照。"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "request_id": "0b925ea8-178a-4221-8ba1-bafeeaeeee91",
+  "status": "ok",
+  "data": {
+    "samples": [
+      {
+        "sample_id": "Es2-467acf3acb6a8191d6ef",
+        "exercise_id": "Es2",
+        "available": true,
+        "quality_status": "pass",
+        "n_frames": 1664,
+        "observed_label_present": true
+      },
+      {
+        "sample_id": "Es2-cf07c9a6cc350b8b0f1d",
+        "exercise_id": "Es2",
+        "available": true,
+        "quality_status": "pass",
+        "n_frames": 1236,
+        "observed_label_present": true
+      },
+      {
+        "sample_id": "Es2-c149ce6b79d5bea4d267",
+        "exercise_id": "Es2",
+        "available": true,
+        "quality_status": "pass",
+        "n_frames": 926,
+        "observed_label_present": true
+      },
+      {
+        "sample_id": "Es2-099f0f68b24e82697bc2",
+        "exercise_id": "Es2",
+        "available": true,
+        "quality_status": "pass",
+        "n_frames": 1196,
+        "observed_label_present": true
+      },
+      {
+        "sample_id": "Es2-446ffdeee3d1f3c5e738",
+        "exercise_id": "Es2",
+        "available": true,
+        "quality_status": "pass",
+        "n_frames": 730,
+        "observed_label_present": true
+      }
+    ],
+    "total_available": 77
+  },
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": null,
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "pipeline_version": "0.1.0",
+    "feature_method_version": "es2-kinematics-wp3.1",
+    "criteria_version": "0.1.0",
+    "reference_version": null,
+    "source_record": null,
+    "source_hash": null
+  }
+}

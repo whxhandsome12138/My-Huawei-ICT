@@ -1,0 +1,248 @@
+@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+
+##############################################################################
+# Es2 的 17 个特征个体（由 tools/gen_ontology_features.py 生成，勿手改）
+#
+# 生成逻辑：
+#   1. 从 MCP 真实响应 real_assess_success.json 读取 feature_id 与 unit；
+#   2. 与 METADATA 中人工维护的证据信息合并；
+#   3. 输出本文件，天然与契约同步——契约改了，重跑脚本即可。
+#
+# 这样做的意义：本体不是一次性文档，而是与工具契约同源、可重复生成的资产。
+##############################################################################
+
+kimore:exercise_Es2 kimore:hasFeature
+    kimore:feature_torso_tilt_left_peak ,
+    kimore:feature_torso_tilt_right_peak ,
+    kimore:feature_torso_tilt_left_range ,
+    kimore:feature_torso_tilt_right_range ,
+    kimore:feature_elbow_angle_left_median ,
+    kimore:feature_elbow_angle_right_median ,
+    kimore:feature_knee_angle_left_median ,
+    kimore:feature_knee_angle_right_median ,
+    kimore:feature_hand_distance_median ,
+    kimore:feature_shoulder_distance_median ,
+    kimore:feature_hip_distance_median ,
+    kimore:feature_repetition_count_left ,
+    kimore:feature_repetition_count_right ,
+    kimore:feature_torso_tilt_left_excursion_up ,
+    kimore:feature_torso_tilt_left_excursion_down ,
+    kimore:feature_torso_tilt_right_excursion_up ,
+    kimore:feature_torso_tilt_right_excursion_down .
+
+kimore:feature_torso_tilt_left_peak a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左侧躯干额状面峰值倾角"@zh ;
+    kimore:featureId "torso_tilt_left_peak" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:3,26,29,60" ;
+    kimore:aggregation "max" ;
+    kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:version "1.0" ;
+    rdfs:comment "作者第 26 行对左侧取负，右侧（第 27 行）不取负，本项目统一为左负右正。"@zh .
+kimore:feature_torso_tilt_right_peak a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右侧躯干额状面峰值倾角"@zh ;
+    kimore:featureId "torso_tilt_right_peak" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:4,27,30,41" ;
+    kimore:aggregation "max" ;
+    kimore:usesJoint "ShoulderRight" , "HipRight" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:version "1.0" ;
+    rdfs:comment "与左侧反号是作者原始实现的一部分，不是笔误。"@zh .
+kimore:feature_torso_tilt_left_range a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左侧躯干倾角活动范围"@zh ;
+    kimore:featureId "torso_tilt_left_range" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:29,30,60,61,62" ;
+    kimore:aggregation "max-minus-min" ;
+    kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:version "1.0" ;
+    rdfs:comment "左侧信号丢前 30 帧后再取极差。"@zh .
+kimore:feature_torso_tilt_right_range a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右侧躯干倾角活动范围"@zh ;
+    kimore:featureId "torso_tilt_right_range" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
+    kimore:aggregation "max-minus-min" ;
+    kimore:usesJoint "ShoulderRight" , "HipRight" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:version "1.0" ;
+    rdfs:comment "右侧信号不丢前 30 帧，与左侧不对称。"@zh .
+kimore:feature_elbow_angle_left_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左肘关节角度中位数"@zh ;
+    kimore:featureId "elbow_angle_left_median" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:81,83,85,87" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "ShoulderLeft" , "ElbowLeft" , "WristLeft" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "余弦定理三点角，与相机朝向无关。"@zh .
+kimore:feature_elbow_angle_right_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右肘关节角度中位数"@zh ;
+    kimore:featureId "elbow_angle_right_median" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:81,83,85,87" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "ShoulderRight" , "ElbowRight" , "WristRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "同上，右侧。"@zh .
+kimore:feature_knee_angle_left_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左膝关节角度中位数"@zh ;
+    kimore:featureId "knee_angle_left_median" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:94,97,99,100" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "HipLeft" , "KneeLeft" , "AnkleLeft" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "余弦定理三点角。"@zh .
+kimore:feature_knee_angle_right_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右膝关节角度中位数"@zh ;
+    kimore:featureId "knee_angle_right_median" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "verified_paper" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:94,97,99,100" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "HipRight" , "KneeRight" , "AnkleRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "同上，右侧。"@zh .
+kimore:feature_hand_distance_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "双手间距中位数"@zh ;
+    kimore:featureId "hand_distance_median" ;
+    kimore:unit "source_length_unit" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:158" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "WristLeft" , "WristRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "link_hand，欧氏距离；单位是 Kinect 相机原始单位，不是米。"@zh .
+kimore:feature_shoulder_distance_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "双肩间距中位数"@zh ;
+    kimore:featureId "shoulder_distance_median" ;
+    kimore:unit "source_length_unit" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:163" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "ShoulderLeft" , "ShoulderRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "link_shoulder，欧氏距离。"@zh .
+kimore:feature_hip_distance_median a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "双髋间距中位数"@zh ;
+    kimore:featureId "hip_distance_median" ;
+    kimore:unit "source_length_unit" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:168" ;
+    kimore:aggregation "median" ;
+    kimore:usesJoint "HipLeft" , "HipRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:version "1.0" ;
+    rdfs:comment "link_hip，欧氏距离。"@zh .
+kimore:feature_repetition_count_left a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左侧动作重复次数"@zh ;
+    kimore:featureId "repetition_count_left" ;
+    kimore:unit "count" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:60" ;
+    kimore:aggregation "count" ;
+    kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:version "1.0" ;
+    rdfs:comment "MATLAB findpeaks 与 scipy find_peaks 在平台段不等价，v1 只用于『是否完成 5 次』二值判断。"@zh .
+kimore:feature_repetition_count_right a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右侧动作重复次数"@zh ;
+    kimore:featureId "repetition_count_right" ;
+    kimore:unit "count" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:41" ;
+    kimore:aggregation "count" ;
+    kimore:usesJoint "ShoulderRight" , "HipRight" ;
+    kimore:verticalReferenceIndependent true ;
+    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:version "1.0" ;
+    rdfs:comment "同上，右侧。"@zh .
+kimore:feature_torso_tilt_left_excursion_up a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左侧躯干上向偏移"@zh ;
+    kimore:featureId "torso_tilt_left_excursion_up" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:60,61,62" ;
+    kimore:aggregation "max-of-diff" ;
+    kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:version "1.0" ;
+    rdfs:comment "相对首个极值的上向偏移，依赖未标定的相机竖直轴。"@zh .
+kimore:feature_torso_tilt_left_excursion_down a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "左侧躯干下向偏移"@zh ;
+    kimore:featureId "torso_tilt_left_excursion_down" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:60,61,62" ;
+    kimore:aggregation "max-of-diff" ;
+    kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:version "1.0" ;
+    rdfs:comment "相对首个极值的下向偏移。"@zh .
+kimore:feature_torso_tilt_right_excursion_up a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右侧躯干上向偏移"@zh ;
+    kimore:featureId "torso_tilt_right_excursion_up" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
+    kimore:aggregation "max-of-diff" ;
+    kimore:usesJoint "ShoulderRight" , "HipRight" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:version "1.0" ;
+    rdfs:comment "同上，右侧。"@zh .
+kimore:feature_torso_tilt_right_excursion_down a owl:NamedIndividual, kimore:Feature ;
+    rdfs:label "右侧躯干下向偏移"@zh ;
+    kimore:featureId "torso_tilt_right_excursion_down" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "derived_engineering" ;
+    kimore:paperCitation "Capecci et al. 2019, KIMORE, p.1441 sII.D（聚合口径为本项目工程选择）" ;
+    kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
+    kimore:aggregation "max-of-diff" ;
+    kimore:usesJoint "ShoulderRight" , "HipRight" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:version "1.0" ;
+    rdfs:comment "同上，右侧。"@zh .

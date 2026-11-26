@@ -1,0 +1,311 @@
+@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################################
+# 「腰衡」评估标准本体 v1.0
+#
+# 设计目标（对应赛题评分项「检索-推理双驱动」「决策可溯源」「半自动本体构建」）：
+#   1. 每个可被智能体引用的度量，都必须能追到「论文出处 + 代码行 + 聚合口径」；
+#   2. 每条结论（Deviation / Plan）都必须挂到一次 Assessment 上，Assessment 必须挂 Dataset；
+#   3. 证据不足时本体层面就禁止出结论，而不是靠提示词约束模型；
+#   4. 版本化：Exercise / Feature / Skill 都带 version，支持 v1 -> v1.1 的灰度替换。
+#
+# 命名约定：
+#   kimore:feature_<snake_case>   与 MCP 返回的 feature_id 一一对应（便于自动对齐）
+#   kimore:exercise_Es2           与 MCP 的 exercise_id 一一对应
+##############################################################################
+
+<https://kimore.yaoheng.example/ontology> a owl:Ontology ;
+    rdfs:label "腰衡 · 腰痛康复动作评估标准本体"@zh ;
+    owl:versionInfo "1.0.0" ;
+    rdfs:comment "以 KIMORE 五个临床动作与 EAAQ 三层评分为底座的可溯源评估标准。"@zh .
+
+##############################################################################
+# 一、顶层类
+##############################################################################
+
+kimore:Exercise a owl:Class ;
+    rdfs:label "临床动作"@zh ;
+    rdfs:comment "KIMORE 定义的标准化动作（Es1–Es5）。一个动作由一组特征共同刻画，不含评分模型。"@zh .
+
+kimore:Feature a owl:Class ;
+    rdfs:label "运动学特征"@zh ;
+    rdfs:comment "可从骨架序列稳定算出的度量。特征本身不是结论，只是证据原料。"@zh .
+
+kimore:Assessment a owl:Class ;
+    rdfs:label "一次评估"@zh ;
+    rdfs:comment "对一条录制（或一次实时采集）执行评估流水线的结果，是全部结论的唯一挂载点。"@zh ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty kimore:hasDataset ;
+        owl:minCardinality 1
+    ] .
+
+kimore:ReferenceDistribution a owl:Class ;
+    rdfs:label "参照分布"@zh ;
+    rdfs:comment "某个特征在同类人群中的分布。只能是数据集内相对描述，不是临床常模。"@zh .
+
+kimore:Deviation a owl:Class ;
+    rdfs:label "偏离项"@zh ;
+    rdfs:comment "观察值相对参照分布的方向与幅度。不是诊断，不是异常判定。"@zh .
+
+kimore:Evidence a owl:Class ;
+    rdfs:label "证据条目"@zh ;
+    rdfs:comment "一条可被引用、可被追到出处的判断依据（论文页码 / 代码行 / 数据集统计）。"@zh .
+
+kimore:Plan a owl:Class ;
+    rdfs:label "训练方案"@zh ;
+    rdfs:comment "面向下一步的可执行建议。必须显式声明不提供哪些结论类型。"@zh .
+
+kimore:Skill a owl:Class ;
+    rdfs:label "技能"@zh ;
+    rdfs:comment "可复用的智能体工作流模板，绑定允许调用的工具集合与版本。"@zh .
+
+kimore:SignConvention a owl:Class ;
+    rdfs:label "符号约定"@zh ;
+    rdfs:comment "角度类特征的正负方向定义。缺少该定义的倾角特征不得进入解释文案。"@zh .
+
+kimore:Dataset a owl:Class ;
+    rdfs:label "数据集"@zh ;
+    rdfs:comment "评估所用数据的来源与采集方式。必须声明是否为回放、是否可宣称实时性。"@zh .
+
+kimore:LabelScheme a owl:Class ;
+    rdfs:label "评分体系"@zh ;
+    rdfs:comment "历史临床评分方案，如 KIMORE 的 cTS / cPO / cCF。"@zh .
+
+##############################################################################
+# 二、对象属性
+##############################################################################
+
+kimore:hasFeature a owl:ObjectProperty ;
+    rdfs:label "包含特征"@zh ;
+    rdfs:domain kimore:Exercise ;
+    rdfs:range kimore:Feature .
+
+kimore:hasAssessment a owl:ObjectProperty ;
+    rdfs:label "包含评估"@zh ;
+    rdfs:domain kimore:Dataset ;
+    rdfs:range kimore:Assessment .
+
+kimore:assessedExercise a owl:ObjectProperty ;
+    rdfs:label "评估的动作"@zh ;
+    rdfs:domain kimore:Assessment ;
+    rdfs:range kimore:Exercise .
+
+kimore:hasDataset a owl:ObjectProperty ;
+    rdfs:label "数据来源"@zh ;
+    rdfs:domain kimore:Assessment ;
+    rdfs:range kimore:Dataset .
+
+kimore:hasSignConvention a owl:ObjectProperty ;
+    rdfs:label "符号约定"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range kimore:SignConvention .
+
+kimore:comparedTo a owl:ObjectProperty ;
+    rdfs:label "参照分布"@zh ;
+    rdfs:domain kimore:Deviation ;
+    rdfs:range kimore:ReferenceDistribution .
+
+kimore:derivedFromAssessment a owl:ObjectProperty ;
+    rdfs:label "由哪次评估产生"@zh ;
+    rdfs:domain kimore:Deviation ;
+    rdfs:range kimore:Assessment .
+
+kimore:aboutFeature a owl:ObjectProperty ;
+    rdfs:label "针对哪个特征"@zh ;
+    rdfs:domain kimore:Deviation ;
+    rdfs:range kimore:Feature .
+
+kimore:supportedBy a owl:ObjectProperty ;
+    rdfs:label "由哪些证据支持"@zh ;
+    rdfs:domain kimore:Deviation ;
+    rdfs:range kimore:Evidence .
+
+kimore:addresses a owl:ObjectProperty ;
+    rdfs:label "针对哪个偏离项"@zh ;
+    rdfs:domain kimore:Plan ;
+    rdfs:range kimore:Deviation .
+
+kimore:allowedTool a owl:ObjectProperty ;
+    rdfs:label "允许调用的工具"@zh ;
+    rdfs:domain kimore:Skill ;
+    rdfs:range kimore:Tool .
+
+kimore:requiresFeature a owl:ObjectProperty ;
+    rdfs:label "前置特征"@zh ;
+    rdfs:domain kimore:Skill ;
+    rdfs:range kimore:Feature .
+
+##############################################################################
+# 三、数据属性
+##############################################################################
+
+kimore:featureId a owl:DatatypeProperty ;
+    rdfs:label "MCP 特征标识"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:string ;
+    rdfs:comment "与 MCP query_criteria / assess_exercise 返回的 feature_id 完全一致。"@zh .
+
+kimore:hasSourceLine a owl:DatatypeProperty ;
+    rdfs:label "实现行号"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:string ;
+    rdfs:comment "作者脚本文件名 + 行号，如 feat_extract_Ex2.m:26。缺失则不得用于解释。"@zh .
+
+kimore:paperCitation a owl:DatatypeProperty ;
+    rdfs:label "论文出处"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:string .
+
+kimore:evidenceLevel a owl:DatatypeProperty ;
+    rdfs:label "证据等级"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range [ a owl:Class ;
+        owl:oneOf ( "verified_paper" "derived_engineering" "descriptive" ) ] .
+
+kimore:aggregation a owl:DatatypeProperty ;
+    rdfs:label "聚合口径"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:string ;
+    rdfs:comment "逐帧信号到标量的聚合方式（median / max / min / max-minus-min / count）。"@zh .
+
+kimore:unit a owl:DatatypeProperty ;
+    rdfs:label "单位"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range [ a owl:Class ;
+        owl:oneOf ( "degree" "count" "ratio" "source_length_unit" ) ] .
+
+kimore:usesJoint a owl:DatatypeProperty ;
+    rdfs:label "依赖关节"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:string .
+
+kimore:verticalReferenceIndependent a owl:DatatypeProperty ;
+    rdfs:label "是否与竖直轴无关"@zh ;
+    rdfs:domain kimore:Feature ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "false 表示绝对值依赖未标定的相机竖直轴，只能做相对比较。"@zh .
+
+kimore:observedLabelPresent a owl:DatatypeProperty ;
+    rdfs:label "是否有历史临床评分"@zh ;
+    rdfs:domain kimore:Assessment ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "数据集存在缺项（如 E_ID17 的 Es1–Es5 全部无 cTS）。false 时不得产生任何 Deviation。"@zh .
+
+kimore:qualityStatus a owl:DatatypeProperty ;
+    rdfs:label "数据质量状态"@zh ;
+    rdfs:domain kimore:Assessment ;
+    rdfs:range [ a owl:Class ;
+        owl:oneOf ( "ok" "low_frame_count" "high_missing_tracking" "partial_features" ) ] .
+
+kimore:hasScript a owl:DatatypeProperty ;
+    rdfs:label "对应脚本"@zh ;
+    rdfs:domain kimore:Exercise ;
+    rdfs:range xsd:string .
+
+kimore:confidence a owl:DatatypeProperty ;
+    rdfs:label "置信度"@zh ;
+    rdfs:domain kimore:Deviation ;
+    rdfs:range xsd:decimal .
+
+kimore:notProvided a owl:DatatypeProperty ;
+    rdfs:label "不提供的结论类型"@zh ;
+    rdfs:domain kimore:Plan ;
+    rdfs:range xsd:string .
+
+kimore:version a owl:DatatypeProperty ;
+    rdfs:label "版本"@zh ;
+    rdfs:range xsd:string .
+
+kimore:sourceType a owl:DatatypeProperty ;
+    rdfs:label "数据来源类型"@zh ;
+    rdfs:domain kimore:Dataset ;
+    rdfs:range [ a owl:Class ;
+        owl:oneOf ( "recorded_kinect" "live_depth" "phone_video" "synthetic" ) ] .
+
+kimore:captureMode a owl:DatatypeProperty ;
+    rdfs:label "采集方式"@zh ;
+    rdfs:domain kimore:Dataset ;
+    rdfs:range [ a owl:Class ;
+        owl:oneOf ( "offline_replay" "realtime" ) ] .
+
+##############################################################################
+# 四、实例：五个临床动作（v1 只冻结 Es2）
+##############################################################################
+
+kimore:exercise_Es1 a owl:NamedIndividual, kimore:Exercise ;
+    rdfs:label "Es1 双臂上举"@zh ;
+    kimore:version "0.0" ;
+    rdfs:comment "尚未冻结特征口径，v1 不提供评估。"@zh .
+
+kimore:exercise_Es2 a owl:NamedIndividual, kimore:Exercise ;
+    rdfs:label "Es2 躯干侧倾（双臂上举持杆）"@zh ;
+    kimore:hasScript "Script/main_Ex2.m" , "Script/preproc_Ex2.m" , "Script/feat_extract_Ex2.m" , "Script/filtering.m" ;
+    kimore:version "1.0" ;
+    rdfs:comment "v1 唯一支持评估的动作，17 个特征见 features.ttl，口径见 query_criteria。"@zh .
+
+kimore:exercise_Es3 a owl:NamedIndividual, kimore:Exercise ;
+    rdfs:label "Es3 躯干屈伸"@zh ;
+    kimore:version "0.0" .
+
+kimore:exercise_Es4 a owl:NamedIndividual, kimore:Exercise ;
+    rdfs:label "Es4 骨盆侧倾"@zh ;
+    kimore:version "0.0" .
+
+kimore:exercise_Es5 a owl:NamedIndividual, kimore:Exercise ;
+    rdfs:label "Es5 下蹲"@zh ;
+    kimore:version "0.0" .
+
+##############################################################################
+# 五、实例：Es2 的特征（示范三条，其余按同一模板批量生成）
+##############################################################################
+
+kimore:sign_left_negative a owl:NamedIndividual, kimore:SignConvention ;
+    rdfs:label "负值表示向受试者左侧偏离"@zh ;
+    kimore:version "1.0" .
+
+kimore:sign_right_positive a owl:NamedIndividual, kimore:SignConvention ;
+    rdfs:label "正值表示向受试者右侧偏离"@zh ;
+    kimore:version "1.0" .
+
+##############################################################################
+# 六、实例：数据集与评分体系
+##############################################################################
+
+kimore:dataset_kimore a owl:NamedIndividual, kimore:Dataset ;
+    rdfs:label "KIMORE 公开数据集"@zh ;
+    kimore:sourceType "recorded_kinect" ;
+    kimore:captureMode "offline_replay" ;
+    kimore:version "unverified" ;
+    rdfs:comment "78 名受试者 / 398 段录制；本项目使用历史 Kinect 记录回放，不宣称实时性与手机等效。"@zh .
+
+kimore:scheme_eaaq a owl:NamedIndividual, kimore:LabelScheme ;
+    rdfs:label "EAAQ 三层评分"@zh ;
+    rdfs:comment "cTS 任务表现 / cPO 疼痛 / cCF 功能受限。数据集只提供汇总分，10 个细项不得宣称还原。"@zh .
+
+##############################################################################
+# 七、工具（与 MCP 服务对齐，供 Skill 声明 allowedTool）
+##############################################################################
+
+kimore:Tool a owl:Class ;
+    rdfs:label "工具"@zh .
+
+kimore:tool_assess_exercise a owl:NamedIndividual, kimore:Tool ;
+    rdfs:label "assess_exercise"@zh .
+
+kimore:tool_explain_deviation a owl:NamedIndividual, kimore:Tool ;
+    rdfs:label "explain_deviation"@zh .
+
+kimore:tool_query_criteria a owl:NamedIndividual, kimore:Tool ;
+    rdfs:label "query_criteria"@zh .
+
+kimore:tool_plan_session a owl:NamedIndividual, kimore:Tool ;
+    rdfs:label "plan_session"@zh .
+
+kimore:tool_list_samples a owl:NamedIndividual, kimore:Tool ;
+    rdfs:label "list_samples"@zh .

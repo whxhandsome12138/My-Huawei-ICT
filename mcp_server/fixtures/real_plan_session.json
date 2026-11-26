@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "request_id": "d0b2f72a-d53a-47fa-b674-669c4d0675d7",
+  "status": "ok",
+  "data": {
+    "exercise_id": "Es2",
+    "records": [
+      {
+        "sample_id": "Es2-467acf3acb6a8191d6ef",
+        "assessment_id": "914478fd8408a1df",
+        "quality": {
+          "status": "pass",
+          "n_frames": 1664,
+          "valid_frames": 1663,
+          "valid_frame_ratio": 0.9994,
+          "reasons": []
+        },
+        "n_frames": 1664,
+        "torso_tilt_left_range": 37.489,
+        "torso_tilt_right_range": 32.478,
+        "torso_tilt_left_excursion_up": 19.668,
+        "torso_tilt_right_excursion_up": 11.893,
+        "repetition_count_left": 6.0,
+        "repetition_count_right": 6.0,
+        "observed_label_present": true
+      },
+      {
+        "sample_id": "Es2-fbab3ba3e46a4ea94233",
+        "assessment_id": "17bfb7dc3544939e",
+        "quality": {
+          "status": "pass",
+          "n_frames": 587,
+          "valid_frames": 586,
+          "valid_frame_ratio": 0.9983,
+          "reasons": []
+        },
+        "n_frames": 587,
+        "torso_tilt_left_range": 25.653,
+        "torso_tilt_right_range": 27.374,
+        "torso_tilt_left_excursion_up": 12.35,
+        "torso_tilt_right_excursion_up": 13.295,
+        "repetition_count_left": 4.0,
+        "repetition_count_right": 4.0,
+        "observed_label_present": true
+      }
+    ],
+    "review_items": [
+      "核对两条记录的采集条件（受试者、日期、相机位置）是否可比；不同次采集不可当作同一人的纵向随访。",
+      "如需比较倾角绝对值，先确认相机竖直轴；跨记录的绝对值差异可能来自标定差异。",
+      "历史临床评分只对应受试者×动作，不能当作本次录制或单次重复的分数。"
+    ],
+    "not_provided": [
+      "诊断",
+      "治疗方案",
+      "用药或剂量建议",
+      "疗效承诺"
+    ]
+  },
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": null,
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "pipeline_version": "0.1.0",
+    "feature_method_version": "es2-kinematics-wp3.1",
+    "criteria_version": "0.1.0",
+    "reference_version": null,
+    "source_record": null,
+    "source_hash": null
+  }
+}

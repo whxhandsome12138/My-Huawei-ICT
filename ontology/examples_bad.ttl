@@ -1,0 +1,46 @@
+@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################################
+# 故意违规的实例：用于证明 shapes.ttl 的约束真的会触发（而不是写在文档里好看）
+#
+# 预期违规（共 5 条）：
+#   1. 评估没有历史临床评分（observedLabelPresent=false），却产生了偏离项   -> SPARQL
+#   2. 该偏离项置信度 0.45 < 0.6                                          -> Warning
+#   3. 方案里出现「诊断」字样                                              -> SPARQL
+#   4. 方案只声明了 1 条不提供项（要求 >= 3）                               -> minCount
+#   5. 特征缺少代码行出处                                                  -> minCount
+#
+# 用法见 tools/validate_ontology.py 的 negative check。
+##############################################################################
+
+kimore:assessment_bad a kimore:Assessment ;
+    kimore:assessedExercise kimore:exercise_Es2 ;
+    kimore:hasDataset kimore:dataset_kimore ;
+    kimore:observedLabelPresent false ;
+    kimore:qualityStatus "low_frame_count" ;
+    rdfs:label "故意缺评分的评估"@zh .
+
+kimore:ref_bad a kimore:ReferenceDistribution ;
+    rdfs:label "若参照"@zh .
+
+kimore:dev_bad a kimore:Deviation ;
+    kimore:aboutFeature kimore:feature_no_source ;
+    kimore:derivedFromAssessment kimore:assessment_bad ;
+    kimore:comparedTo kimore:ref_bad ;
+    kimore:confidence "0.45"^^xsd:decimal ;
+    rdfs:label "没有评分的样本却被判为偏离"@zh .
+
+kimore:plan_bad a kimore:Plan ;
+    kimore:addresses kimore:dev_bad ;
+    kimore:notProvided "不做诊断" ;
+    rdfs:label "诊断结论：建议按腰椎间盘突出处理"@zh .
+
+kimore:feature_no_source a kimore:Feature ;
+    kimore:featureId "no_source_feature" ;
+    kimore:unit "degree" ;
+    kimore:evidenceLevel "descriptive" ;
+    kimore:aggregation "median" ;
+    kimore:verticalReferenceIndependent false ;
+    kimore:version "1.0" .

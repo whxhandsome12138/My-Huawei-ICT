@@ -1,0 +1,292 @@
+@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+##############################################################################
+# 「腰衡」本体约束 v1.0（与 ontology.ttl 1.0.0 配套）
+#
+# 这套 shapes 的作用不是「数据校验」，而是把评分表里的承诺变成可执行的规则：
+#   - 决策可溯源  -> Deviation 必须挂 Assessment、Feature 必须挂代码行
+#   - 不许硬编     -> 缺临床评分的样本，本体层面就禁止产生偏离项
+#   - 不乱下结论   -> Plan 必须显式声明不提供哪些结论，且措辞里不许出现诊断类词
+#   - 版本可灰度   -> Exercise / Skill / Feature 必须带 version
+#
+# 校验方式（需 pip install pyshacl rdflib）：
+#   pyshacl -s shapes.ttl -e ontology.ttl -f human instances.ttl
+# 注意：pyshacl 默认不做 RDFS 推理，ontology.ttl 里 rdfs:domain 只作说明，
+#       不会把 Evidence 推断成 Feature。
+##############################################################################
+
+##############################################################################
+# 1. 特征：没有出处的度量不允许存在
+##############################################################################
+
+kimore:FeatureShape a sh:NodeShape ;
+    sh:targetClass kimore:Feature ;
+    sh:property [
+        sh:path kimore:featureId ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[a-z][a-z0-9_]+$" ;
+        sh:message "特征必须有 feature_id，且与 MCP 返回的标识一致（小写蛇形）。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:hasSourceLine ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "\\.m:[0-9]" ;
+        sh:message "特征必须能追到作者脚本的具体行号，例如 feat_extract_Ex2.m:26。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:unit ;
+        sh:minCount 1 ;
+        sh:in ( "degree" "count" "ratio" "source_length_unit" ) ;
+        sh:message "单位必须是 degree / count / ratio / source_length_unit 之一（source_length_unit 是 Kinect 相机原始单位，不是米）。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:evidenceLevel ;
+        sh:minCount 1 ;
+        sh:in ( "verified_paper" "derived_engineering" "descriptive" ) ;
+        sh:message "证据等级必须声明，用于解释文案里区分『论文原文』与『本项目工程选择』。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:aggregation ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "必须声明逐帧信号到标量的聚合口径（median / max / min / max-minus-min / count）。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:verticalReferenceIndependent ;
+        sh:minCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "必须声明该特征是否依赖未标定的相机竖直轴。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:version ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "角度类特征若依赖相机竖直轴，必须绑定符号约定，否则不得进入解释文案。"@zh ;
+        sh:select """
+            SELECT $this ?unit
+            WHERE {
+                $this kimore:unit ?unit .
+                $this kimore:verticalReferenceIndependent false .
+                FILTER (?unit = "degree")
+                FILTER NOT EXISTS { $this kimore:hasSignConvention ?s }
+            }
+        """
+    ] .
+
+##############################################################################
+# 2. 一次评估：必须挂数据来源，必须声明有没有历史评分
+##############################################################################
+
+kimore:AssessmentShape a sh:NodeShape ;
+    sh:targetClass kimore:Assessment ;
+    sh:property [
+        sh:path kimore:hasDataset ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "任何评估都必须说明数据来自哪里（回放 / 实时 / 合成）。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:assessedExercise ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path kimore:observedLabelPresent ;
+        sh:minCount 1 ;
+        sh:datatype xsd:boolean
+    ] ;
+    sh:property [
+        sh:path kimore:qualityStatus ;
+        sh:minCount 1 ;
+        sh:in ( "ok" "low_frame_count" "high_missing_tracking" "partial_features" )
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "该样本没有历史临床评分，不得产生任何偏离项——只能报告特征值并建议复测。"@zh ;
+        sh:select """
+            SELECT $this ?dev
+            WHERE {
+                $this kimore:observedLabelPresent false .
+                ?dev kimore:derivedFromAssessment $this .
+            }
+        """
+    ] .
+
+##############################################################################
+# 3. 偏离项：结论必须能被追问到证据
+##############################################################################
+
+kimore:DeviationShape a sh:NodeShape ;
+    sh:targetClass kimore:Deviation ;
+    sh:property [
+        sh:path kimore:aboutFeature ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "偏离项必须指明针对哪个特征。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:derivedFromAssessment ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "偏离项必须挂在一次具体评估上，不能凭空出现。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:comparedTo ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "偏离必须有参照分布，否则无法说明『相对于谁偏离』。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:supportedBy ;
+        sh:minCount 1 ;
+        sh:message "至少一条证据条目。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:confidence ;
+        sh:minCount 1 ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 1 ;
+        sh:message "置信度必须在 0–1 之间。"@zh
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "置信度低于 0.6 的偏离项应标注为『建议复测』，不得直接给出训练调整。"@zh ;
+        sh:select """
+            SELECT $this ?c
+            WHERE {
+                $this kimore:confidence ?c .
+                FILTER (?c < 0.6)
+            }
+        """ ;
+        sh:severity sh:Warning
+    ] .
+
+##############################################################################
+# 4. 训练方案：必须承认自己不是什么
+##############################################################################
+
+kimore:PlanShape a sh:NodeShape ;
+    sh:targetClass kimore:Plan ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1
+    ] ;
+    sh:property [
+        sh:path kimore:addresses ;
+        sh:minCount 1 ;
+        sh:message "方案必须对应到至少一个偏离项，避免给通用模板。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:notProvided ;
+        sh:minCount 3 ;
+        sh:message "方案必须显式声明至少三条不提供的结论（诊断 / 疗效 / 处方 等）。"@zh
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "方案文本中不得出现诊断、处方、治愈、确诊等医疗结论性措辞。"@zh ;
+        sh:select """
+            SELECT $this ?label
+            WHERE {
+                $this rdfs:label ?label .
+                FILTER (
+                    CONTAINS(STR(?label), "诊断") ||
+                    CONTAINS(STR(?label), "处方") ||
+                    CONTAINS(STR(?label), "治愈") ||
+                    CONTAINS(STR(?label), "确诊")
+                )
+            }
+        """
+    ] .
+
+##############################################################################
+# 5. 动作：冻结版本必须真的有关联特征
+##############################################################################
+
+kimore:ExerciseShape a sh:NodeShape ;
+    sh:targetClass kimore:Exercise ;
+    sh:property [
+        sh:path kimore:version ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "只有 version 1.0 及以上的动作才允许对外评估，且必须至少关联 5 个特征。"@zh ;
+        sh:select """
+            SELECT $this ?v ?n
+            WHERE {
+                $this kimore:version ?v .
+                FILTER (?v = "1.0")
+                OPTIONAL { $this kimore:hasFeature ?f }
+            }
+            GROUP BY $this ?v
+            HAVING (COUNT(?f) < 5)
+        """
+    ] .
+
+##############################################################################
+# 6. 技能：允许调用的工具必须显式声明
+##############################################################################
+
+kimore:SkillShape a sh:NodeShape ;
+    sh:targetClass kimore:Skill ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1
+    ] ;
+    sh:property [
+        sh:path kimore:allowedTool ;
+        sh:minCount 1 ;
+        sh:message "Skill 必须声明 allowed-tools，否则等于给智能体开全部工具权限。"@zh
+    ] ;
+    sh:property [
+        sh:path kimore:version ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string
+    ] .
+
+##############################################################################
+# 7. 数据集：回放就是回放，不许暗示实时
+##############################################################################
+
+kimore:DatasetShape a sh:NodeShape ;
+    sh:targetClass kimore:Dataset ;
+    sh:property [
+        sh:path kimore:sourceType ;
+        sh:minCount 1 ;
+        sh:in ( "recorded_kinect" "live_depth" "phone_video" "synthetic" )
+    ] ;
+    sh:property [
+        sh:path kimore:captureMode ;
+        sh:minCount 1 ;
+        sh:in ( "offline_replay" "realtime" )
+    ] ;
+    sh:property [
+        sh:path kimore:version ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string
+    ] .
+
+##############################################################################
+# 8. 证据：没有出处就不是证据
+##############################################################################
+
+kimore:EvidenceShape a sh:NodeShape ;
+    sh:targetClass kimore:Evidence ;
+    sh:property [
+        sh:path kimore:paperCitation ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "证据条目必须给出论文出处或数据集统计出处。"@zh
+    ] .

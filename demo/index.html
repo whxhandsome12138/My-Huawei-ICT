@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>腰衡 · 动作评估（回放演示）</title>
+<style>
+  :root{
+    --ink:#1c1c1e; --muted:#6b6b70; --line:#e3e3e6; --bg:#fbfbfa;
+    --card:#ffffff; --accent:#1f5f5b; --warn-bg:#fdf6e7; --warn-line:#e8d9b0;
+    --ok:#1f7a4d; --bad:#a33a2c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px 80px}
+  header{padding:44px 0 22px;border-bottom:1px solid var(--line)}
+  h1{margin:0 0 6px;font-size:26px;font-weight:600;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px}
+  .banner{
+    margin:22px 0 0;padding:14px 18px;background:var(--warn-bg);
+    border:1px solid var(--warn-line);border-radius:4px;font-size:13.5px;color:#5a4a22;
+  }
+  .banner b{color:#7a5c14}
+  section{margin-top:40px}
+  h2{font-size:15px;font-weight:600;letter-spacing:1px;color:var(--muted);
+     margin:0 0 16px;text-transform:uppercase}
+  h2 span{color:var(--ink);letter-spacing:0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:6px;
+    padding:16px 18px;cursor:pointer;transition:.15s;position:relative;
+  }
+  .card:hover{border-color:#c9c9cf;transform:translateY(-1px)}
+  .card.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .card .tagline{font-size:11px;letter-spacing:1px;color:var(--accent);
+     text-transform:uppercase;margin-bottom:6px}
+  .card h3{margin:0 0 6px;font-size:15px;font-weight:600}
+  .card p{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:22px 24px}
+  .empty{color:var(--muted);font-size:14px;padding:28px 0;text-align:center}
+  .chain{list-style:none;margin:0;padding:0;counter-reset:s}
+  .chain li{
+    position:relative;padding:12px 0 12px 40px;border-bottom:1px dashed var(--line);
+  }
+  .chain li:last-child{border-bottom:0}
+  .chain li::before{
+    counter-increment:s; content:counter(s);
+    position:absolute;left:0;top:14px;width:22px;height:22px;border-radius:50%;
+    background:#eef3f2;color:var(--accent);font-size:12px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tool{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px;font-weight:600}
+  .args{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;
+        color:var(--muted);margin-left:8px}
+  .st{font-size:11px;padding:1px 7px;border-radius:10px;margin-left:8px;
+      border:1px solid var(--line);color:var(--muted)}
+  .st.ok{color:var(--ok);border-color:#cfe6da;background:#f2faf5}
+  .st.bad{color:var(--bad);border-color:#eed3cd;background:#fdf4f2}
+  details{margin-top:8px}
+  summary{cursor:pointer;font-size:12.5px;color:var(--muted);outline:none}
+  summary:hover{color:var(--ink)}
+  pre{
+    margin:10px 0 0;padding:14px;background:#f7f7f5;border:1px solid var(--line);
+    border-radius:4px;font:12px/1.6 ui-monospace,Menlo,Consolas,monospace;
+    overflow:auto;max-height:340px;white-space:pre;
+  }
+  .out h3{font-size:14px;margin:26px 0 10px;padding-left:10px;
+          border-left:3px solid var(--accent);font-weight:600}
+  .out h3:first-child{margin-top:0}
+  .out p{margin:6px 0}
+  .out .lead{font-size:15.5px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{font-weight:600;font-size:12.5px;color:var(--muted);background:#fafaf8}
+  td.num{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .kv{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0}
+  .kv div{font-size:13px}
+  .kv b{display:block;font-size:11.5px;color:var(--muted);font-weight:400;margin-bottom:2px}
+  .qa{border:1px solid var(--line);border-radius:6px;background:var(--card);overflow:hidden}
+  .qa details{border-bottom:1px solid var(--line);margin:0}
+  .qa details:last-child{border-bottom:0}
+  .qa summary{padding:15px 20px;font-size:14px;color:var(--ink);list-style:none}
+  .qa summary::-webkit-details-marker{display:none}
+  .qa summary::before{content:"问";font-size:11px;color:var(--accent);
+      margin-right:10px;border:1px solid #cfe0de;border-radius:3px;padding:0 4px}
+  .qa .ans{padding:0 20px 18px 42px;font-size:14px}
+  .qa .ans p{margin:0 0 8px}
+  .qa .ans p:last-child{margin-bottom:0}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+         font-size:12.5px;color:var(--muted);line-height:1.9}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+       background:#f2f2ef;padding:1px 5px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>腰衡 · 动作评估</h1>
+    <div class="sub">面向腰痛居家康复的动作评估与随访 · 离线回放演示</div>
+  </header>
+
+  <div class="banner">
+    <b>这是回放演示，不是实时评估。</b>
+    下面所有数值来自 KIMORE 数据集的历史 Kinect 记录，通过 MCP 工具原样返回；
+    不做诊断、不给训练处方、不评价疗效。真实的智能体在 Nexent 平台上运行，本页只是把同一批工具返回摊开给你看。
+  </div>
+
+  <section>
+    <h2><span>① 选一个场景</span></h2>
+    <div class="grid" id="scenarios"></div>
+  </section>
+
+  <section>
+    <h2><span>② 工具调用链</span></h2>
+    <div class="panel" id="chain"><div class="empty">先在上面选一个场景</div></div>
+  </section>
+
+  <section>
+    <h2><span>③ 输出</span></h2>
+    <div class="panel" id="output"><div class="empty">先在上面选一个场景</div></div>
+  </section>
+
+  <section>
+    <h2><span>④ 可以这样问它</span></h2>
+    <div class="qa" id="qa"></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = {"assess":{"schema_version":"0.1.0","request_id":"19200f3a-25db-486d-ad7e-3917871e1c1b","status":"ok","data":{"sample_id":"Es2-467acf3acb6a8191d6ef","exercise_id":"Es2","assessment_id":"914478fd8408a1df","mode":"kinematics","quality":{"status":"pass","n_frames":1664,"valid_frames":1663,"valid_frame_ratio":0.9994,"reasons":[]},"observed_label":{"cTS":45.0,"cPO":13.667,"cCF":31.333,"label_kind":"historical_clinician","label_level":"subject_exercise","note":"历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。"},"predicted_score":null,"diagnostics":{"frame_rate_hz":30.303,"dropped_interval_ratio":0.0012,"vertical_reference":"no_correction"},"features":[{"feature_id":"torso_tilt_left_peak","display_name":"左侧躯干额状面峰值倾角","value":-26.497,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderLeft","HipLeft"],"source_frame_index":1103,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":false},{"feature_id":"torso_tilt_right_peak","display_name":"右侧躯干额状面峰值倾角","value":20.901,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderRight","HipRight"],"source_frame_index":1565,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":false},{"feature_id":"torso_tilt_left_range","display_name":"左侧躯干倾角活动范围","value":37.489,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderLeft","HipLeft"],"source_frame_index":1557,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"torso_tilt_right_range","display_name":"右侧躯干倾角活动范围","value":32.478,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderRight","HipRight"],"source_frame_index":1565,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"elbow_angle_left_median","display_name":"左肘关节角中位数","value":164.214,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderLeft","ElbowLeft","WristLeft"],"source_frame_index":1574,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"elbow_angle_right_median","display_name":"右肘关节角中位数","value":157.41,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderRight","ElbowRight","WristRight"],"source_frame_index":729,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"knee_angle_left_median","display_name":"左膝关节角中位数","value":166.161,"unit":"degree","status":"ok","reason":null,"joints":["HipLeft","KneeLeft","AnkleLeft"],"source_frame_index":211,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"knee_angle_right_median","display_name":"右膝关节角中位数","value":164.906,"unit":"degree","status":"ok","reason":null,"joints":["HipRight","KneeRight","AnkleRight"],"source_frame_index":1650,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"hand_distance_median","display_name":"双手间距中位数","value":0.627,"unit":"source_length_unit","status":"ok","reason":null,"joints":["HandLeft","HandRight"],"source_frame_index":56,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"shoulder_distance_median","display_name":"双肩间距中位数","value":0.283,"unit":"source_length_unit","status":"ok","reason":null,"joints":["ShoulderLeft","ShoulderRight"],"source_frame_index":895,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"hip_distance_median","display_name":"双髋间距中位数","value":0.146,"unit":"source_length_unit","status":"ok","reason":null,"joints":["HipLeft","HipRight"],"source_frame_index":1196,"time_s":null,"evidence_level":"verified_paper","vertical_reference_independent":true},{"feature_id":"repetition_count_left","display_name":"左侧动作重复次数（峰值计数）","value":6.0,"unit":"count","status":"ok","reason":null,"joints":["ShoulderLeft","HipLeft"],"source_frame_index":85,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"repetition_count_right","display_name":"右侧动作重复次数（峰值计数）","value":6.0,"unit":"count","status":"ok","reason":null,"joints":["ShoulderRight","HipRight"],"source_frame_index":77,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"torso_tilt_left_excursion_up","display_name":"左侧躯干倾角上向偏移（相对自身中位）","value":19.668,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderLeft","HipLeft"],"source_frame_index":1557,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"torso_tilt_left_excursion_down","display_name":"左侧躯干倾角下向偏移（相对自身中位）","value":17.82,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderLeft","HipLeft"],"source_frame_index":1103,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"torso_tilt_right_excursion_up","display_name":"右侧躯干倾角上向偏移（相对自身中位）","value":11.893,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderRight","HipRight"],"source_frame_index":1565,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true},{"feature_id":"torso_tilt_right_excursion_down","display_name":"右侧躯干倾角下向偏移（相对自身中位）","value":20.585,"unit":"degree","status":"ok","reason":null,"joints":["ShoulderRight","HipRight"],"source_frame_index":792,"time_s":null,"evidence_level":"derived_engineering","vertical_reference_independent":true}],"reference":{"reference_version":"es2-ref-1","method":"per_subject_median_then_distribution","n_subjects":71},"deviations":[{"evidence_id":"e7db38436c9bdc62","feature_id":"torso_tilt_left_peak","unit":"degree","observed":-26.497,"reference_value":-26.386,"difference":-0.111,"direction":"below_reference","frame_index":1103,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement."},{"evidence_id":"66a739d181a2ce4c","feature_id":"torso_tilt_right_peak","unit":"degree","observed":20.901,"reference_value":24.969,"difference":-4.068,"direction":"below_reference","frame_index":1565,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement."},{"evidence_id":"6e83b1b0f5d84c89","feature_id":"torso_tilt_left_range","unit":"degree","observed":37.489,"reference_value":37.25,"difference":0.239,"direction":"above_reference","frame_index":1557,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement."}]},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":"es2-ref-1","source_record":null,"source_hash":"698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"}},"assessLabel":{"schema_version":"0.1.0","request_id":"8f554a16-358d-4ef5-a5f0-f968f05ec826","status":"ok","data":{"sample_id":"Es2-467acf3acb6a8191d6ef","exercise_id":"Es2","assessment_id":"914478fd8408a1df","mode":"observed_label","quality":{"status":"pass","n_frames":1664,"valid_frames":1663,"valid_frame_ratio":0.9994,"reasons":[]},"observed_label":{"cTS":45.0,"cPO":13.667,"cCF":31.333,"label_kind":"historical_clinician","label_level":"subject_exercise","note":"历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。"},"predicted_score":null,"diagnostics":{"frame_rate_hz":30.303,"dropped_interval_ratio":0.0012,"vertical_reference":"no_correction"},"features":[],"reference":null,"deviations":[]},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":"es2-ref-1","source_record":null,"source_hash":"698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"}},"query":{"schema_version":"0.1.0","request_id":"d99ce14e-9ce5-413a-9450-bffc6e2014ea","status":"ok","data":{"exercise_id":"Es2","display_name":"躯干侧倾（双臂上举持杆）","paper_locator":"Capecci et al. 2019, IEEE TNSRE 27(7):1436-1448, p. 1441, section II.D","expected_repetitions":5,"expected_repetitions_locator":"p. 1441, section II.D (each exercise is performed five consecutive times)","features":[{"feature_id":"torso_tilt_left_peak","display_name":"左侧躯干额状面峰值倾角","unit":"degree","kind":"primary_outcome","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (beta_l)","joints":["ShoulderLeft","HipLeft"],"vertical_reference_independent":false},{"feature_id":"torso_tilt_right_peak","display_name":"右侧躯干额状面峰值倾角","unit":"degree","kind":"primary_outcome","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (beta_r)","joints":["ShoulderRight","HipRight"],"vertical_reference_independent":false},{"feature_id":"torso_tilt_left_range","display_name":"左侧躯干倾角活动范围","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderLeft","HipLeft"],"vertical_reference_independent":true},{"feature_id":"torso_tilt_right_range","display_name":"右侧躯干倾角活动范围","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderRight","HipRight"],"vertical_reference_independent":true},{"feature_id":"elbow_angle_left_median","display_name":"左肘关节角中位数","unit":"degree","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (gamma_l)","joints":["ShoulderLeft","ElbowLeft","WristLeft"],"vertical_reference_independent":true},{"feature_id":"elbow_angle_right_median","display_name":"右肘关节角中位数","unit":"degree","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (gamma_r)","joints":["ShoulderRight","ElbowRight","WristRight"],"vertical_reference_independent":true},{"feature_id":"knee_angle_left_median","display_name":"左膝关节角中位数","unit":"degree","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (phi_l)","joints":["HipLeft","KneeLeft","AnkleLeft"],"vertical_reference_independent":true},{"feature_id":"knee_angle_right_median","display_name":"右膝关节角中位数","unit":"degree","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (phi_r)","joints":["HipRight","KneeRight","AnkleRight"],"vertical_reference_independent":true},{"feature_id":"hand_distance_median","display_name":"双手间距中位数","unit":"source_length_unit","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (d_h)","joints":["HandLeft","HandRight"],"vertical_reference_independent":true},{"feature_id":"shoulder_distance_median","display_name":"双肩间距中位数","unit":"source_length_unit","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (d_s)","joints":["ShoulderLeft","ShoulderRight"],"vertical_reference_independent":true},{"feature_id":"hip_distance_median","display_name":"双髋间距中位数","unit":"source_length_unit","kind":"control_factor","evidence_level":"verified_paper","paper_citation":"p.1441 sII.D (d_hip)","joints":["HipLeft","HipRight"],"vertical_reference_independent":true},{"feature_id":"repetition_count_left","display_name":"左侧动作重复次数（峰值计数）","unit":"count","kind":"derived_engineering","evidence_level":"derived_engineering","paper_citation":"5 reps stated p.1441; rule from feat_extract_Ex2.m","joints":["ShoulderLeft","HipLeft"],"vertical_reference_independent":true},{"feature_id":"repetition_count_right","display_name":"右侧动作重复次数（峰值计数）","unit":"count","kind":"derived_engineering","evidence_level":"derived_engineering","paper_citation":"5 reps stated p.1441; rule from feat_extract_Ex2.m","joints":["ShoulderRight","HipRight"],"vertical_reference_independent":true},{"feature_id":"torso_tilt_left_excursion_up","display_name":"左侧躯干倾角上向偏移（相对自身中位）","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderLeft","HipLeft"],"vertical_reference_independent":true},{"feature_id":"torso_tilt_left_excursion_down","display_name":"左侧躯干倾角下向偏移（相对自身中位）","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderLeft","HipLeft"],"vertical_reference_independent":true},{"feature_id":"torso_tilt_right_excursion_up","display_name":"右侧躯干倾角上向偏移（相对自身中位）","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderRight","HipRight"],"vertical_reference_independent":true},{"feature_id":"torso_tilt_right_excursion_down","display_name":"右侧躯干倾角下向偏移（相对自身中位）","unit":"degree","kind":"primary_outcome_derived","evidence_level":"derived_engineering","paper_citation":"derived from p.1441 sII.D","joints":["ShoulderRight","HipRight"],"vertical_reference_independent":true}],"unavailable":[{"item":"lumbar angle","reason":"骨架只有 25 个关节，无腰椎节段定义，只能报告躯干整体倾角。"},{"item":"hip angle (psi)","reason":"论文未给出关节定义与符号约定，无法唯一复现。"},{"item":"wrist-shoulder vertical distance","reason":"论文称竖直距离，作者实现取相机深度轴，冲突未解决。"},{"item":"hip transverse coordinates","reason":"坐标系原点与符号未核实。"},{"item":"predicted score","reason":"未验证任何评分预测模型。"}],"vertical_reference":{"decision":"no_correction","summary":"相机竖直轴未标定；地面反推经实测不可靠，故不修正。"}},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}},"explain":{"schema_version":"0.1.0","request_id":"92371202-a48a-42d5-a660-9c4efd9350f9","status":"ok","data":{"sample_id":"Es2-467acf3acb6a8191d6ef","assessment_id":"914478fd8408a1df","evidence":[{"evidence_id":"e7db38436c9bdc62","feature_id":"torso_tilt_left_peak","unit":"degree","observed":-26.497,"reference_value":-26.386,"difference":-0.111,"direction":"below_reference","frame_index":1103,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement.","reference":{"median":-26.386,"p25":-29.903,"p75":-23.031,"n_subjects":71,"n_records":76,"method":"per-subject median, then distribution over subjects"}},{"evidence_id":"66a739d181a2ce4c","feature_id":"torso_tilt_right_peak","unit":"degree","observed":20.901,"reference_value":24.969,"difference":-4.068,"direction":"below_reference","frame_index":1565,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement.","reference":{"median":24.969,"p25":22.517,"p75":28.126,"n_subjects":71,"n_records":76,"method":"per-subject median, then distribution over subjects"}},{"evidence_id":"6e83b1b0f5d84c89","feature_id":"torso_tilt_left_range","unit":"degree","observed":37.489,"reference_value":37.25,"difference":0.239,"direction":"above_reference","frame_index":1557,"reference_n_subjects":71,"interpretation_limit":"Descriptive difference against a dataset-relative reference; not a clinical judgement.","reference":{"median":37.25,"p25":31.778,"p75":40.545,"n_subjects":71,"n_records":76,"method":"per-subject median, then distribution over subjects"}}],"not_evidence_of":["临床异常","治疗指征","损伤诊断"]},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":"es2-ref-1","source_record":null,"source_hash":"698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"}},"plan":{"schema_version":"0.1.0","request_id":"d0b2f72a-d53a-47fa-b674-669c4d0675d7","status":"ok","data":{"exercise_id":"Es2","records":[{"sample_id":"Es2-467acf3acb6a8191d6ef","assessment_id":"914478fd8408a1df","quality":{"status":"pass","n_frames":1664,"valid_frames":1663,"valid_frame_ratio":0.9994,"reasons":[]},"n_frames":1664,"torso_tilt_left_range":37.489,"torso_tilt_right_range":32.478,"torso_tilt_left_excursion_up":19.668,"torso_tilt_right_excursion_up":11.893,"repetition_count_left":6.0,"repetition_count_right":6.0,"observed_label_present":true},{"sample_id":"Es2-fbab3ba3e46a4ea94233","assessment_id":"17bfb7dc3544939e","quality":{"status":"pass","n_frames":587,"valid_frames":586,"valid_frame_ratio":0.9983,"reasons":[]},"n_frames":587,"torso_tilt_left_range":25.653,"torso_tilt_right_range":27.374,"torso_tilt_left_excursion_up":12.35,"torso_tilt_right_excursion_up":13.295,"repetition_count_left":4.0,"repetition_count_right":4.0,"observed_label_present":true}],"review_items":["核对两条记录的采集条件（受试者、日期、相机位置）是否可比；不同次采集不可当作同一人的纵向随访。","如需比较倾角绝对值，先确认相机竖直轴；跨记录的绝对值差异可能来自标定差异。","历史临床评分只对应受试者×动作，不能当作本次录制或单次重复的分数。"],"not_provided":["诊断","治疗方案","用药或剂量建议","疗效承诺"]},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}},"list":{"schema_version":"0.1.0","request_id":"0b925ea8-178a-4221-8ba1-bafeeaeeee91","status":"ok","data":{"samples":[{"sample_id":"Es2-467acf3acb6a8191d6ef","exercise_id":"Es2","available":true,"quality_status":"pass","n_frames":1664,"observed_label_present":true},{"sample_id":"Es2-cf07c9a6cc350b8b0f1d","exercise_id":"Es2","available":true,"quality_status":"pass","n_frames":1236,"observed_label_present":true},{"sample_id":"Es2-c149ce6b79d5bea4d267","exercise_id":"Es2","available":true,"quality_status":"pass","n_frames":926,"observed_label_present":true},{"sample_id":"Es2-099f0f68b24e82697bc2","exercise_id":"Es2","available":true,"quality_status":"pass","n_frames":1196,"observed_label_present":true},{"sample_id":"Es2-446ffdeee3d1f3c5e738","exercise_id":"Es2","available":true,"quality_status":"pass","n_frames":730,"observed_label_present":true}],"total_available":77},"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":null,"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}},"errNotFound":{"schema_version":"0.1.0","request_id":"4099b107-4afc-49db-b201-a1f87ee0434c","status":"error","data":null,"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":{"code":"SAMPLE_NOT_FOUND","message":"样本 ID 未在本地索引中找到。","retryable":false},"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}},"errInvalid":{"schema_version":"0.1.0","request_id":"a44fe24d-61fc-46fd-8544-20174b8c93e3","status":"error","data":null,"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":{"code":"INVALID_ARGUMENT","message":"sample_id 必须形如 Es2-<20 位小写十六进制>；不接受路径或 URL。","retryable":false},"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}},"errModel":{"schema_version":"0.1.0","request_id":"ab63769f-3137-4796-9004-1ab7b23ba1e7","status":"error","data":null,"warnings":["历史 Kinect 记录回放，非实时采集，非手机等效。","observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。","参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"],"error":{"code":"MODEL_UNAVAILABLE","message":"未验证任何评分预测模型，预测模式不开放。","retryable":false},"provenance":{"dataset":"KIMORE","source_type":"recorded_kinect","capture_mode":"offline_replay","dataset_version":"unverified","pipeline_version":"0.1.0","feature_method_version":"es2-kinematics-wp3.1","criteria_version":"0.1.0","reference_version":null,"source_record":null,"source_hash":null}}};
+const SCEN = [{"id":"expert","tag":"主路径","title":"专家组记录 · 完整评估","desc":"四个工具串成一次评估：找记录 → 算特征 → 取口径 → 查证据。","steps":[{"tool":"list_samples","args":{"limit":5},"resp":"list"},{"tool":"assess_exercise","args":{"sample_id":"Es2-467acf3acb6a8191d6ef"},"resp":"assess"},{"tool":"query_criteria","args":{"exercise_id":"Es2"},"resp":"query"},{"tool":"explain_deviation","args":{"sample_id":"Es2-467acf3acb6a8191d6ef"},"resp":"explain"}],"render":"assess"},{"id":"label","tag":"边界","title":"历史评分模式 · 只有分数没有特征","desc":"同一条记录，换一种读法：只要历史临床评分，不重算运动学特征。","steps":[{"tool":"assess_exercise","args":{"sample_id":"Es2-467acf3acb6a8191d6ef","mode":"observed_label"},"resp":"assessLabel"}],"render":"label"},{"id":"compare","tag":"对比","title":"两条记录并排对照","desc":"plan_session 一次取两条记录的横截面，并自带「可比性提醒」。","steps":[{"tool":"plan_session","args":{"sample_ids":["Es2-467acf3acb6a8191d6ef"]},"resp":"plan"}],"render":"plan"},{"id":"notfound","tag":"错误","title":"记录不存在","desc":"给一个不存在的 ID，服务正常返回业务错误，不抛协议异常。","steps":[{"tool":"assess_exercise","args":{"sample_id":"Es2-00000000000000000000"},"resp":"errNotFound"}],"render":"error"},{"id":"invalid","tag":"错误","title":"参数非法（路径穿越尝试）","desc":"把路径当 ID 传进来，被参数校验挡掉。","steps":[{"tool":"assess_exercise","args":{"sample_id":"../../Kimore"},"resp":"errInvalid"}],"render":"error"},{"id":"model","tag":"错误","title":"未验证的预测","desc":"预测分数这个模式目前不可用，服务如实拒绝。","steps":[{"tool":"assess_exercise","args":{"sample_id":"Es2-467acf3acb6a8191d6ef","mode":"baseline_prediction"},"resp":"errModel"}],"render":"error"}];
+const QA = [{"q":"这条记录做得怎么样？","a":["先说结论：这条记录本身可用（1664 帧里 1663 帧有效），最值得看的是右侧躯干峰值倾角比参照低约 4.1°。","偏离点里只有右侧峰值这一项差异有实际意义；左侧两项与参照几乎持平。","我不给「做得好/不好」的判断——参照是这份数据集里 71 名其他受试者的分布，不是临床常模。"]},{"q":"左右两侧的活动范围都比参照小吗？","a":["不能这么说。左侧活动范围有参照值（本次 37.49°，参照中位数 37.25°），右侧活动范围的参照值工具没有返回。","所以我只能说左侧；右侧那一半没有依据，我不会用「两侧」把它们合起来讲。"]},{"q":"给我开个训练计划，每天做几组？","a":["这个我不能给。训练动作、组数、时长、频次都属于治疗决策，需要治疗师结合你的情况来定。","我能做的是：对照你多条记录之间的变化，指出哪些指标偏离了参照，供你和治疗师讨论。"]},{"q":"能预测我的 EAAQ 分数吗？","a":["暂时不能。预测分数这个能力目前返回「模型不可用」——我们还没有经过验证的预测模型，所以宁可不给。","工具返回里 predicted_score 一直是 null，这是刻意的。"]},{"q":"我用手机拍一段视频传上来行吗？","a":["可以传，但结果会和这里的数字不一样，而且不能保证可比。","这批数据来自 Kinect 深度相机，手机是单目视频，关节位置精度、视角、竖直轴标定都不同。手机测出来的角度既不能和 Kinect 的数值比，也不能拿去和这 71 人的参照分布算偏离。"]}];
+
+const SID = "Es2-467acf3acb6a8191d6ef";
+const $ = (id) => document.getElementById(id);
+const fmt = (n, d = 3) => (typeof n === "number" ? n.toFixed(d) : String(n));
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+function renderScenarios() {
+  $("scenarios").innerHTML = SCEN.map((s) => `
+    <div class="card" data-id="${s.id}">
+      <div class="tagline">${esc(s.tag)}</div>
+      <h3>${esc(s.title)}</h3>
+      <p>${esc(s.desc)}</p>
+    </div>`).join("");
+  document.querySelectorAll(".card").forEach((el) => {
+    el.addEventListener("click", () => select(el.dataset.id));
+  });
+}
+
+function select(id) {
+  const s = SCEN.find((x) => x.id === id);
+  document.querySelectorAll(".card").forEach((el) => el.classList.toggle("on", el.dataset.id === id));
+  renderChain(s);
+  renderOutput(s);
+}
+
+function renderChain(s) {
+  const items = s.steps.map((st) => {
+    const res = DATA[st.resp];
+    const ok = res.status === "ok" || res.status === "partial";
+    const cls = ok ? "ok" : "bad";
+    return `<li>
+      <span class="tool">${esc(st.tool)}</span>
+      <span class="args">${esc(JSON.stringify(st.args))}</span>
+      <span class="st ${cls}">${esc(res.status)}</span>
+      <details><summary>查看这次返回的原始 JSON（${JSON.stringify(res).length.toLocaleString()} 字符）</summary>
+        <pre>${esc(JSON.stringify(res, null, 2))}</pre>
+      </details>
+    </li>`;
+  }).join("");
+  $("chain").innerHTML = `<ol class="chain">${items}</ol>`;
+}
+
+function renderOutput(s) {
+  const fn = { assess: outAssess, label: outLabel, plan: outPlan, error: outError }[s.render];
+  $("output").innerHTML = `<div class="out">${fn(s)}</div>`;
+}
+
+function outError(s) {
+  const res = DATA[s.steps[0].resp];
+  const e = res.error || {};
+  return `<h3>结论</h3>
+    <p class="lead">这次请求没有成功，服务返回了业务错误，没有抛协议异常。</p>
+    <div class="kv">
+      <div><b>错误码</b><code>${esc(e.code)}</code></div>
+      <div><b>可否重试</b>${e.retryable ? "可以" : "不可以"}</div>
+      <div><b>状态</b>${esc(res.status)}</div>
+    </div>
+    <p>${esc(e.message || "")}</p>
+    <h3>智能体应该怎么答</h3>
+    <p>${errorTalk(e.code)}</p>`;
+}
+
+function errorTalk(code) {
+  const m = {
+    SAMPLE_NOT_FOUND: "这条记录在库里找不到，可能是 ID 写错了或该段录制缺失。我不会猜一个相近的记录来代替。",
+    INVALID_ARGUMENT: "参数不符合要求（ID 必须是形如 Es2- 加 20 位十六进制），请确认后重试。",
+    MODEL_UNAVAILABLE: "预测分数这个能力目前不可用——还没有经过验证的模型，所以不给数。运动学特征仍然可以看。",
+  };
+  return m[code] || "这类错误会原样告知，不做静默处理。";
+}
+
+function outLabel(s) {
+  const d = DATA[s.steps[0].resp].data;
+  const L = d.observed_label || {};
+  return `<h3>结论</h3>
+    <p class="lead">这条记录只有历史临床评分，没有重算运动学特征。</p>
+    <div class="kv">
+      <div><b>cTS 总分</b>${fmt(L.cTS, 1)} / 50</div>
+      <div><b>cPO 疼痛</b>${fmt(L.cPO, 3)} / 15</div>
+      <div><b>cCF 功能</b>${fmt(L.cCF, 3)} / 35</div>
+    </div>
+    <h3>这三个数是什么</h3>
+    <p>受试者在做这个动作时，治疗师按 EAAQ 量表给的评分，三个分量加起来是总分。粒度是「受试者 × 动作」，不是这一次录制，也不是某一次重复。</p>
+    <h3>为什么这里没有特征</h3>
+    <p>这个模式只取历史评分，不重新解析骨架。要看运动学特征，切回默认模式。</p>
+    <h3>边界</h3>
+    <p>历史评分代表当年的状态，不代表今天。用它做纵向比较前，先确认是同一人、同一动作、同一评分者。</p>`;
+}
+
+function outPlan(s) {
+  const d = DATA[s.steps[0].resp].data;
+  const recs = d.records || [];
+  const cols = [
+    ["torso_tilt_left_range", "左侧倾角活动范围", "°"],
+    ["torso_tilt_right_range", "右侧倾角活动范围", "°"],
+    ["torso_tilt_left_excursion_up", "左侧上向偏移", "°"],
+    ["torso_tilt_right_excursion_up", "右侧上向偏移", "°"],
+    ["repetition_count_left", "左侧重复次数", " 次"],
+    ["repetition_count_right", "右侧重复次数", " 次"],
+  ];
+  const head = `<tr><th>指标</th>${recs.map((r, i) => `<th>记录 ${i + 1}</th>`).join("")}</tr>`;
+  const rows = cols.map(([k, label, u]) => {
+    const tds = recs.map((r) => {
+      if (!(k in r) || r[k] == null) return `<td class="num">未返回</td>`;
+      const v = k.startsWith("repetition") ? r[k].toFixed(0) : r[k].toFixed(3);
+      return `<td class="num">${v}${u}</td>`;
+    }).join("");
+    return `<tr><td>${label}</td>${tds}</tr>`;
+  }).join("");
+  const ids = recs.map((r, i) =>
+    `<li>记录 ${i + 1}：<code>${esc(r.sample_id)}</code>　${r.n_frames} 帧，质量位 ${esc((r.quality || {}).status)}</li>`
+  ).join("");
+  const reviews = (d.review_items || []).map((x) => `<li>${esc(x)}</li>`).join("");
+  const np = (d.not_provided || []).map((x) => `<li>${esc(x)}</li>`).join("");
+  const r0 = recs[0] || {};
+  return `<h3>一、可比性</h3>
+    <p class="lead">先别急着比数字：这 ${recs.length} 条记录是不是同一个人、同一天、同一机位，工具没有确认。不同人之间只能做横向对照，不能读成「进步」。</p>
+    <ul>${ids}</ul>
+    <h3>二、横截面</h3>
+    <table><thead>${head}</thead><tbody>${rows}</tbody></table>
+    <h3>三、读法</h3>
+    <p>${fmt(r0.torso_tilt_left_range, 3)}° 是左侧倾角在整段动作里的最大值减最小值，反映摆动的幅度，不是姿态好坏。</p>
+    <p>重复次数 ${fmt(r0.repetition_count_left, 0)} 次，动作要求是 5 次。多于 5 次可能是多计，少于 5 次可能是录制提前结束——两种都不等于「做得不对」。</p>
+    <h3>四、这个工具没给的东西</h3>
+    <ul>${np}</ul>
+    <h3>五、看之前提醒自己的事</h3>
+    <ul>${reviews}</ul>`;
+}
+
+function outAssess(s) {
+  const res = DATA[s.steps[1].resp];
+  const d = res.data;
+  const q = (DATA[s.steps[2].resp] || {}).data || {};
+  const ev = ((DATA[s.steps[3].resp] || {}).data || {}).evidence || [];
+  const evById = {};
+  ev.forEach((e) => (evById[e.feature_id] = e));
+
+  const q0 = d.quality || {};
+  const devs = (d.deviations || []).slice().sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference));
+  const top = devs[0];
+
+  // 结论：只陈述最大偏离，不评价好坏
+  let lead = "";
+  if (top) {
+    const e = evById[top.feature_id] || {};
+    const ref = e.reference || {};
+    let outside = "";
+    if (typeof ref.p25 === "number" && typeof ref.p75 === "number") {
+      if (top.observed < ref.p25) outside = `，低于参照四分位区间下沿（${fmt(ref.p25, 2)}°）`;
+      else if (top.observed > ref.p75) outside = `，高于参照四分位区间上沿（${fmt(ref.p75, 2)}°）`;
+      else outside = `，仍在参照四分位区间（${fmt(ref.p25, 2)}–${fmt(ref.p75, 2)}°）之内`;
+    }
+    const name = featureName(top.feature_id, d);
+    const dir = top.difference < 0 ? "低" : "高";
+    lead = `这条记录可用。${name}比参照中位数${dir} ${fmt(Math.abs(top.difference), 2)}°${outside}。`;
+  } else {
+    lead = "这条记录可用，没有发现与参照有明显差异的指标。";
+  }
+
+  // 偏离点表
+  const devRows = devs.map((x) => {
+    const e = evById[x.feature_id] || {};
+    const ref = e.reference || {};
+    const iq = (typeof ref.p25 === "number" && typeof ref.p75 === "number")
+      ? `${fmt(ref.p25, 2)} – ${fmt(ref.p75, 2)}` : "未返回";
+    return `<tr>
+      <td>${esc(featureName(x.feature_id, d))}</td>
+      <td class="num">${fmt(x.observed, 3)}</td>
+      <td class="num">${fmt(x.reference_value, 3)}</td>
+      <td class="num">${x.difference > 0 ? "+" : ""}${fmt(x.difference, 3)}</td>
+      <td class="num">${iq}</td>
+    </tr>`;
+  }).join("");
+
+  // 其他特征
+  const devIds = new Set(devs.map((x) => x.feature_id));
+  const others = (d.features || []).filter((f) => !devIds.has(f.feature_id));
+  const otherRows = others.map((f) => `<tr>
+      <td>${esc(f.display_name || f.feature_id)}</td>
+      <td class="num">${fmt(f.value, 3)}</td>
+      <td>${esc(f.unit === "degree" ? "°" : f.unit === "count" ? "次" : f.unit)}</td>
+      <td>${f.source_frame_index == null ? "—" : f.source_frame_index}</td>
+    </tr>`).join("");
+
+  const L = d.observed_label || {};
+  const npc = ((q.unavailable) || []).length;
+
+  return `<h3>结论</h3>
+    <p class="lead">${esc(lead)}</p>
+
+    <h3>数据可用性</h3>
+    <div class="kv">
+      <div><b>总帧数</b>${q0.n_frames}</div>
+      <div><b>有效帧</b>${q0.valid_frames}</div>
+      <div><b>有效率</b>${(q0.valid_frame_ratio * 100).toFixed(2)}%</div>
+      <div><b>质量位</b>${esc(q0.status)}</div>
+      <div><b>采样率</b>${fmt((d.diagnostics || {}).frame_rate_hz, 3)} Hz</div>
+      <div><b>丢帧率</b>${((d.diagnostics || {}).dropped_interval_ratio * 100).toFixed(2)}%</div>
+    </div>
+
+    <h3>判定口径</h3>
+    <p>动作：${esc(q.display_name || "Es2")}。要求连续做 ${q.expected_repetitions} 次。</p>
+    <p class="note">出处：${esc(q.paper_locator || "")}</p>
+
+    <h3>偏离点（相对 71 名其他受试者）</h3>
+    <table><thead><tr>
+      <th>特征</th><th>本次</th><th>参照中位数</th><th>差异</th><th>参照四分位区间</th>
+    </tr></thead><tbody>${devRows}</tbody></table>
+    <p class="note">只有这三项有参照值。表中没出现过的特征，不能拿来说「偏高/偏低」。</p>
+
+    <h3>其他指标（有数值、无参照）</h3>
+    <p>另有 ${others.length} 项特征只报数值，不参与偏离判定：</p>
+    <details><summary>展开看这 ${others.length} 项</summary>
+      <table><thead><tr><th>特征</th><th>值</th><th>单位</th><th>帧号</th></tr></thead>
+      <tbody>${otherRows}</tbody></table>
+    </details>
+
+    <h3>历史评分（仅供参考，不是我算的）</h3>
+    <p>cTS ${fmt(L.cTS, 1)} / cPO ${fmt(L.cPO, 3)} / cCF ${fmt(L.cCF, 3)}——这是当年治疗师给的评分，粒度为「受试者 × 动作」，不代表这次录制或某一次重复。</p>
+
+    <h3>边界</h3>
+    <p>参照是这份数据集内 71 名受试者的相对分布，不是临床常模；倾角的绝对值依赖未标定的相机竖直轴，只宜相对比较；本页不做诊断、不评价疗效、不给训练方案。</p>
+    <p class="note">服务端还有 ${npc} 项指标被明确标注为「不可得」（腰椎角度、髋角 psi 等），不会用近似值顶替。</p>`;
+}
+
+function featureName(id, d) {
+  const f = (d.features || []).find((x) => x.feature_id === id);
+  return f && f.display_name ? f.display_name : id;
+}
+
+function renderQA() {
+  $("qa").innerHTML = QA.map((x, i) => `<details${i === 0 ? " open" : ""}>
+      <summary>${esc(x.q)}</summary>
+      <div class="ans">${x.a.map((p) => `<p>${esc(p)}</p>`).join("")}</div>
+    </details>`).join("");
+}
+
+function renderFoot() {
+  $("foot").innerHTML = `
+    <p>数据：KIMORE 公开数据集（Capecci et al. 2019, IEEE TNSRE），78 名受试者 / 398 段动作。</p>
+    <p>本页数值全部来自 MCP 工具的真实返回（<code>assess_exercise</code> / <code>query_criteria</code> /
+    <code>explain_deviation</code> / <code>plan_session</code> / <code>list_samples</code>），未做修改。</p>
+    <p>回放演示 · 生成于 2026-11-26 · 完整智能体需在 Nexent 平台运行</p>`;
+}
+
+renderScenarios();
+renderQA();
+renderFoot();
+const _init = new URLSearchParams(location.search).get("s");
+select(SCEN.some((x) => x.id === _init) ? _init : "expert");
+</script>
+</body>
+</html>

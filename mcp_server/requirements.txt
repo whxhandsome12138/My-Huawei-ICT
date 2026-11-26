@@ -1,0 +1,7 @@
+# 运行期依赖（尽量少）
+# mcp 1.30.0：官方 SDK，内含 FastMCP；2.x 把类改名为 MCPServer，注意别装到 2.x
+mcp==1.30.0
+
+# 本体校验（只在跑 ontology 校验时需要，服务本身不用）
+# rdflib==7.6.0
+# pyshacl==0.30.0

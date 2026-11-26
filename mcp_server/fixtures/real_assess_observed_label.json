@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.1.0",
+  "request_id": "8f554a16-358d-4ef5-a5f0-f968f05ec826",
+  "status": "ok",
+  "data": {
+    "sample_id": "Es2-467acf3acb6a8191d6ef",
+    "exercise_id": "Es2",
+    "assessment_id": "914478fd8408a1df",
+    "mode": "observed_label",
+    "quality": {
+      "status": "pass",
+      "n_frames": 1664,
+      "valid_frames": 1663,
+      "valid_frame_ratio": 0.9994,
+      "reasons": []
+    },
+    "observed_label": {
+      "cTS": 45.0,
+      "cPO": 13.667,
+      "cCF": 31.333,
+      "label_kind": "historical_clinician",
+      "label_level": "subject_exercise",
+      "note": "历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。"
+    },
+    "predicted_score": null,
+    "diagnostics": {
+      "frame_rate_hz": 30.303,
+      "dropped_interval_ratio": 0.0012,
+      "vertical_reference": "no_correction"
+    },
+    "features": [],
+    "reference": null,
+    "deviations": []
+  },
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": null,
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "pipeline_version": "0.1.0",
+    "feature_method_version": "es2-kinematics-wp3.1",
+    "criteria_version": "0.1.0",
+    "reference_version": "es2-ref-1",
+    "source_record": null,
+    "source_hash": "698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"
+  }
+}

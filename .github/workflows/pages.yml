@@ -1,0 +1,47 @@
+name: pages
+
+# 把 demo/ 发到 GitHub Pages —— 评委点一个链接就能看，不用装任何东西。
+# 仓库 Settings → Pages → Source 选 "GitHub Actions" 后生效。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "demo/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # 从 fixtures 重建演示页，保证页面内容永远与工具返回一致
+      - name: Rebuild demo from fixtures
+        run: python demo/build_demo.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: demo
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

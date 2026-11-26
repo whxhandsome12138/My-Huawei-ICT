@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "request_id": "4099b107-4afc-49db-b201-a1f87ee0434c",
+  "status": "error",
+  "data": null,
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": {
+    "code": "SAMPLE_NOT_FOUND",
+    "message": "样本 ID 未在本地索引中找到。",
+    "retryable": false
+  },
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "pipeline_version": "0.1.0",
+    "feature_method_version": "es2-kinematics-wp3.1",
+    "criteria_version": "0.1.0",
+    "reference_version": null,
+    "source_record": null,
+    "source_hash": null
+  }
+}
