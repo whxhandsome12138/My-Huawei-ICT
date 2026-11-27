@@ -136,9 +136,9 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
                 raw = await session.call_tool("assess_exercise", {"sample_id": FULL})
                 env = envelope_of(raw)
                 vals = feature_values(env)
-                # 只断言「不随符号约定变化」的数值：range 与右侧峰在 1.0.0 / 1.1.0 都同值。
-                # 左侧峰的符号在 1.1.0 会翻正（作者口径），故不在此断言，见 docs/FEATURE_PROVENANCE.md §3。
-                # deviations 条数会随符号修正浮动，断言「有偏离点且不超过 5 条」。
+                # B 1.0.0 起左侧已按作者口径取负（feat_extract_Ex2.m:26），
+                # 因此左峰为 +26.497；这里只钉住不随符号变化的量与总量，见 §5.1。
+                # deviations 取工具默认的前 3 条（MAX_EVIDENCE_ITEMS）。
                 ok = (
                     env["status"] == "ok"
                     and len(vals) == 17
@@ -161,12 +161,14 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
             await ck.check("B 工具", "assess_exercise mode=observed_label", t_assess_label)
 
             async def t_assess_second() -> tuple[bool, str]:
+                # 11-24 交付后 tracking 掩码由 code==2 放宽为 code>=1（见 configs/pipeline.json
+                # 的 feature_mask 实测说明），这一条已由 partial 11/17 变为 ok 17/17。
                 env = await call("assess_exercise", {"sample_id": SECOND})
                 vals = feature_values(env)
-                ok = env["status"] == "partial" and len(vals) == 11 and abs(vals.get("torso_tilt_left_range", 0) - 25.653) < 1e-6
+                ok = env["status"] == "ok" and len(vals) == 17 and abs(vals.get("torso_tilt_left_range", 0) - 25.653) < 1e-6
                 return ok, f"status={env['status']} features={len(vals)} left_range={vals.get('torso_tilt_left_range')}"
 
-            await ck.check("B 工具", "assess_exercise 样本#2 走 partial（11/17）", t_assess_second)
+            await ck.check("B 工具", "assess_exercise 样本#2 完整 17 特征", t_assess_second)
 
             async def t_explain() -> tuple[bool, str]:
                 env = await call("explain_deviation", {"sample_id": FULL})
@@ -179,7 +181,8 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
             async def t_explain_filter() -> tuple[bool, str]:
                 env = await call("explain_deviation", {"sample_id": FULL, "feature_id": "torso_tilt_right_peak"})
                 items = env["data"]["evidence"]
-                ok = len(items) == 1 and items[0]["feature_id"] == "torso_tilt_right_peak" and abs(items[0]["difference"] + 4.068) < 1e-6
+                # 参照重建（前 29 帧截断）后右侧峰参照中位由 24.969 变 24.858，差值 −4.066
+                ok = len(items) == 1 and items[0]["feature_id"] == "torso_tilt_right_peak" and abs(items[0]["difference"] + 4.066) < 1e-6
                 return ok, f"evidence={len(items)} diff={items[0]['difference'] if items else None}"
 
             await ck.check("B 工具", "explain_deviation feature_id 过滤", t_explain_filter)
@@ -238,12 +241,15 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
 
             await ck.check("C 失败", "重复 ID → INVALID_ARGUMENT", t_dup)
 
-            async def t_partial() -> tuple[bool, str]:
-                env = await call("explain_deviation", {"sample_id": SECOND})
-                ok = env["status"] == "partial" and ((env.get("data") or {}).get("evidence") or []) == []
-                return ok, f"status={env['status']} evidence={len((env.get('data') or {}).get('evidence') or [])}"
+            async def t_unknown_feature() -> tuple[bool, str]:
+                # 原先用"样例 2 没有参照"触发 partial；样例 2 现在有完整参照，
+                # 改测同一条业务错误路径：未知 feature_id 必须走 error.code 而不是协议异常。
+                env = await call("explain_deviation", {"sample_id": SECOND, "feature_id": "no_such_feature"})
+                e = env.get("error") or {}
+                ok = env["status"] == "error" and e.get("code") == "FEATURE_UNAVAILABLE" and e.get("retryable") is False
+                return ok, f"status={env['status']} code={e.get('code')}"
 
-            await ck.check("C 失败", "缺明细 → partial（不抛异常）", t_partial)
+            await ck.check("C 失败", "未知 feature_id → FEATURE_UNAVAILABLE（不抛异常）", t_unknown_feature)
 
     passed = sum(1 for r in ck.rows if r["ok"])
     total = len(ck.rows)
