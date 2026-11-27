@@ -1,5 +1,7 @@
-# 数据（不进 Git）
-data/
+# 数据（大文件不进 Git；清单与说明要进）
+data/*
+!data/README.md
+!data/SHA256SUMS.txt
 Kimore/
 *.csv
 !mcp_server/fixtures/*.json

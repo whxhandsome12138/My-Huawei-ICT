@@ -1,0 +1,12 @@
+# KIMORE 数据集与论文：校验清单
+#
+# 这些文件不在本仓库里（体积 3.5 GB + 第三方版权）。拿到本地副本后用：
+#     sha256sum -c data/SHA256SUMS.txt          # Linux / macOS
+#     python tools/check_data.py --root <目录>  # 跨平台
+#
+# 格式：<sha256>  <建议文件名>  <字节数>  <说明>
+
+d5724dcae4368e716d27772e9ca48ebe8bb076a6f30e16438e293730b33653f8  CG-20261123T070200Z-1-001.zip  1897411626  健康组作者包：CG/Expert + CG/NotExpert，含 Script/*.m 与深度 AVI
+46b934cb1bfe1bc07b6f3a50f7f984d563e2474bfd325c7169490f738f9f1f00  GPP-20261123T070200Z-1-001.zip  1748561304  患者组作者包：GPP/BackPain + Stroke + Parkinson
+ea1569e9bf3472423b3cdc2f3abd2f76d1023c4793f4742517bcb4e32842b09a  archive.zip  186678342  精简包：仅骨架 JointPosition/Orientation + 标签 xlsx，顶层目录 Kimore/
+18db6903e3ff185f0e7304c723dd686d4a42857e0bcf237e0433765dd509b73e  draftKIMORE.pdf  1980143  论文草稿：Capecci et al., IEEE TNSRE 27(7):1436-1448, 2019（口径依据）

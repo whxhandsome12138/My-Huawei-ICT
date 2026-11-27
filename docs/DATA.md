@@ -5,6 +5,25 @@
 **本仓库不含 KIMORE 原始数据**。你需要自己下载，放到 `mcp_server` 能读到的位置；
 不想下载也能跑——仓库自带的 `fixtures/` 足够演示与自检。
 
+**拿到副本后先对一下哈希**（`data/SHA256SUMS.txt`），确认和大家用的是同一份数据：
+
+```bash
+sha256sum -c data/SHA256SUMS.txt      # Linux / macOS
+python tools/check_data.py --root <放 zip 的目录>   # 跨平台，逐条报通过/缺失/大小不符/哈希不符
+```
+
+| 文件 | 体积 | 作用 | SHA256 前 8 位 |
+| :-- | --: | :-- | :-- |
+| `CG-*.zip` | 1.81 GB | 健康组作者包（`Expert` / `NotExpert`，含 `.m` 脚本与深度 AVI） | `d5724dca` |
+| `GPP-*.zip` | 1.67 GB | 患者组作者包（`BackPain` / `Stroke` / `Parkinson`） | `46b934cb` |
+| `archive.zip` | 178 MB | 精简包（只有骨架与标签，顶层 `Kimore/`） | `ea1569e9` |
+| `draftKIMORE.pdf` | 1.9 MB | 论文草稿（口径依据） | `18db6903` |
+
+**为什么这三个大文件不在仓库里**：GitHub 单文件硬上限 100 MB，作者包 1.81 GB / 1.67 GB
+连 push 都过不去；免费 Git LFS 只有 1 GB 额度，两个包合计 3.5 GB。另外数据集的使用条款
+不允许二次分发，论文草稿的版权在 IEEE 与作者。所以仓库保留的是**可验证的引用**（哈希 + 结构 +
+获取方式），不是二进制本身。详见 [`data/README.md`](../data/README.md)。
+
 ---
 
 ## 1. 数据是什么

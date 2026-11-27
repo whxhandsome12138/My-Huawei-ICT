@@ -19,7 +19,10 @@
 - 论文：Capecci M, Ceravolo M G, Ferracuti F, et al. *The KIMORE dataset: KInematic assessment
   of MOvements and clinical scores for telerehabilitation of low back pain.* IEEE Transactions
   on Neural Systems and Rehabilitation Engineering, 2019, 27(7): 1436–1448.
-- 状态：**本仓库不包含原始数据**，也未再分发其任何派生原始记录。
+- 状态：**本仓库不包含原始数据**（作者包 `CG` 1.81 GB、`GPP` 1.67 GB，且其条款不允许二次分发），
+  也未再分发其任何派生原始记录。仓库只保留**校验清单**（`data/SHA256SUMS.txt`，SHA256 + 字节数）
+  与获取说明（`data/README.md`），用于确认使用者手上那份副本与我们一致。
+- 论文 PDF（`draftKIMORE.pdf`，1.9 MB）版权在 IEEE 与作者，**同样不分发**，仅以文献引用形式出现。
 - `mcp_server/fixtures/` 中仅保留**工具返回值的结构化摘要**（如 17 项特征的数值），
   用于离线演示与自检；不包含骨架坐标序列、视频或个人身份信息。
 

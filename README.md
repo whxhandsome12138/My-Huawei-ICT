@@ -90,8 +90,15 @@ cd nexent && bash deploy.sh docker --image-source mainland
 
 ## 数据从哪来（重要）
 
-本仓库**不包含** KIMORE 原始数据。原因有两条：数据集体量（186 MB / 1983 文件）不适合进 Git；
-它的使用条款也不允许我们二次分发。
+本仓库**不包含** KIMORE 原始数据。原因是一条硬约束加一条软约束：
+
+- **体积**：作者包 `CG` 1.81 GB、`GPP` 1.67 GB，合计 3.5 GB。GitHub 单文件硬上限 100 MB，
+  免费 Git LFS 只有 1 GB 额度——塞不进去，硬推会被直接拒收。
+- **许可**：数据集的使用条款不允许二次分发；论文（IEEE TNSRE 2019）版权在 IEEE 与作者，
+  我们只引用、不再分发。
+
+所以仓库给的是**可验证的引用**：`data/SHA256SUMS.txt` 记录四个文件的 SHA256 与字节数，
+`tools/check_data.py` 拿来就能校验你手上那份是不是同一份，`data/README.md` 写清获取途径与摆放结构。
 
 请自行前往论文作者提供的渠道下载，并遵守其条款：
 
@@ -99,8 +106,9 @@ cd nexent && bash deploy.sh docker --image-source mainland
 > MOvements and clinical scores for telerehabilitation of low back pain.** *IEEE Transactions on
 > Neural Systems and Rehabilitation Engineering*, 2019, 27(7): 1436–1448.
 
-拿到数据后按 [`docs/DATA.md`](docs/DATA.md) 摆放目录，`mcp_server` 会自动索引。
-仓库里带的 `mcp_server/fixtures/` 是**脱敏后的工具返回值**，用于离线演示与自检，不是原始骨架。
+拿到数据后先 `python tools/check_data.py --root <目录>` 对哈希，再按 [`docs/DATA.md`](docs/DATA.md)
+摆放目录，`mcp_server` 会自动索引。仓库里带的 `mcp_server/fixtures/` 是**脱敏后的工具返回值**，
+用于离线演示与自检，不是原始骨架。
 
 ---
 
