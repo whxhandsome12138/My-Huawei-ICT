@@ -1,11 +1,11 @@
 {
-  "schema_version": "0.1.0",
-  "request_id": "19200f3a-25db-486d-ad7e-3917871e1c1b",
+  "schema_version": "1.0.0",
+  "request_id": "9933aa25-7349-4842-a86d-17e7c233ba4d",
   "status": "ok",
   "data": {
     "sample_id": "Es2-467acf3acb6a8191d6ef",
     "exercise_id": "Es2",
-    "assessment_id": "914478fd8408a1df",
+    "assessment_id": "bebcd7da300b8a8d",
     "mode": "kinematics",
     "quality": {
       "status": "pass",
@@ -32,7 +32,7 @@
       {
         "feature_id": "torso_tilt_left_peak",
         "display_name": "左侧躯干额状面峰值倾角",
-        "value": -26.497,
+        "value": 26.497,
         "unit": "degree",
         "status": "ok",
         "reason": null,
@@ -72,7 +72,7 @@
           "ShoulderLeft",
           "HipLeft"
         ],
-        "source_frame_index": 1557,
+        "source_frame_index": 1103,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -220,7 +220,7 @@
           "ShoulderLeft",
           "HipLeft"
         ],
-        "source_frame_index": 85,
+        "source_frame_index": 139,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -236,7 +236,7 @@
           "ShoulderRight",
           "HipRight"
         ],
-        "source_frame_index": 77,
+        "source_frame_index": 48,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -244,7 +244,7 @@
       {
         "feature_id": "torso_tilt_left_excursion_up",
         "display_name": "左侧躯干倾角上向偏移（相对自身中位）",
-        "value": 19.668,
+        "value": 17.949,
         "unit": "degree",
         "status": "ok",
         "reason": null,
@@ -252,7 +252,7 @@
           "ShoulderLeft",
           "HipLeft"
         ],
-        "source_frame_index": 1557,
+        "source_frame_index": 1074,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -260,7 +260,7 @@
       {
         "feature_id": "torso_tilt_left_excursion_down",
         "display_name": "左侧躯干倾角下向偏移（相对自身中位）",
-        "value": 17.82,
+        "value": 19.54,
         "unit": "degree",
         "status": "ok",
         "reason": null,
@@ -268,7 +268,7 @@
           "ShoulderLeft",
           "HipLeft"
         ],
-        "source_frame_index": 1103,
+        "source_frame_index": 1528,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -276,7 +276,7 @@
       {
         "feature_id": "torso_tilt_right_excursion_up",
         "display_name": "右侧躯干倾角上向偏移（相对自身中位）",
-        "value": 11.893,
+        "value": 12.113,
         "unit": "degree",
         "status": "ok",
         "reason": null,
@@ -284,7 +284,7 @@
           "ShoulderRight",
           "HipRight"
         ],
-        "source_frame_index": 1565,
+        "source_frame_index": 1536,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -292,7 +292,7 @@
       {
         "feature_id": "torso_tilt_right_excursion_down",
         "display_name": "右侧躯干倾角下向偏移（相对自身中位）",
-        "value": 20.585,
+        "value": 20.365,
         "unit": "degree",
         "status": "ok",
         "reason": null,
@@ -300,7 +300,7 @@
           "ShoulderRight",
           "HipRight"
         ],
-        "source_frame_index": 792,
+        "source_frame_index": 763,
         "time_s": null,
         "evidence_level": "derived_engineering",
         "vertical_reference_independent": true
@@ -313,13 +313,13 @@
     },
     "deviations": [
       {
-        "evidence_id": "e7db38436c9bdc62",
+        "evidence_id": "bae0039522599d0e",
         "feature_id": "torso_tilt_left_peak",
         "unit": "degree",
-        "observed": -26.497,
-        "reference_value": -26.386,
-        "difference": -0.111,
-        "direction": "below_reference",
+        "observed": 26.497,
+        "reference_value": 26.47,
+        "difference": 0.027,
+        "direction": "above_reference",
         "frame_index": 1103,
         "reference_n_subjects": 71,
         "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
@@ -329,22 +329,22 @@
         "feature_id": "torso_tilt_right_peak",
         "unit": "degree",
         "observed": 20.901,
-        "reference_value": 24.969,
-        "difference": -4.068,
+        "reference_value": 24.967,
+        "difference": -4.066,
         "direction": "below_reference",
         "frame_index": 1565,
         "reference_n_subjects": 71,
         "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
       },
       {
-        "evidence_id": "6e83b1b0f5d84c89",
+        "evidence_id": "c7f575672343e203",
         "feature_id": "torso_tilt_left_range",
         "unit": "degree",
         "observed": 37.489,
         "reference_value": 37.25,
         "difference": 0.239,
         "direction": "above_reference",
-        "frame_index": 1557,
+        "frame_index": 1103,
         "reference_n_subjects": 71,
         "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
       }
@@ -361,9 +361,11 @@
     "source_type": "recorded_kinect",
     "capture_mode": "offline_replay",
     "dataset_version": "unverified",
-    "pipeline_version": "0.1.0",
-    "feature_method_version": "es2-kinematics-wp3.1",
-    "criteria_version": "0.1.0",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": 72,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": "0.2.0",
     "reference_version": "es2-ref-1",
     "source_record": null,
     "source_hash": "698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"

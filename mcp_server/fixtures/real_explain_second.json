@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "c96ad97a-0089-4471-a912-4b951145b877",
+  "status": "ok",
+  "data": {
+    "sample_id": "Es2-fbab3ba3e46a4ea94233",
+    "assessment_id": "8783a0296e99494a",
+    "evidence": [
+      {
+        "evidence_id": "7bda2f0eac385dd0",
+        "feature_id": "torso_tilt_left_peak",
+        "unit": "degree",
+        "observed": 24.422,
+        "reference_value": 26.497,
+        "difference": -2.075,
+        "direction": "below_reference",
+        "frame_index": 61,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement.",
+        "reference": {
+          "median": 26.497,
+          "p25": 23.165,
+          "p75": 30.086,
+          "n_subjects": 71,
+          "n_records": 76,
+          "method": "per-subject median, then distribution over subjects"
+        }
+      },
+      {
+        "evidence_id": "36b41a33edb4292e",
+        "feature_id": "torso_tilt_right_peak",
+        "unit": "degree",
+        "observed": 22.099,
+        "reference_value": 24.967,
+        "difference": -2.868,
+        "direction": "below_reference",
+        "frame_index": 99,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement.",
+        "reference": {
+          "median": 24.967,
+          "p25": 22.234,
+          "p75": 28.126,
+          "n_subjects": 71,
+          "n_records": 76,
+          "method": "per-subject median, then distribution over subjects"
+        }
+      },
+      {
+        "evidence_id": "4768908f0abcbf9f",
+        "feature_id": "torso_tilt_left_range",
+        "unit": "degree",
+        "observed": 25.653,
+        "reference_value": 37.489,
+        "difference": -11.836,
+        "direction": "below_reference",
+        "frame_index": 61,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement.",
+        "reference": {
+          "median": 37.489,
+          "p25": 31.778,
+          "p75": 40.545,
+          "n_subjects": 71,
+          "n_records": 76,
+          "method": "per-subject median, then distribution over subjects"
+        }
+      }
+    ],
+    "not_evidence_of": [
+      "临床异常",
+      "治疗指征",
+      "损伤诊断"
+    ]
+  },
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": null,
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": 72,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": "0.2.0",
+    "reference_version": "es2-ref-1",
+    "source_record": null,
+    "source_hash": "13f9c0b791d42e806f3abf38caa0438ef77c3af34c5ccbb5b17eaa548f12e583"
+  }
+}

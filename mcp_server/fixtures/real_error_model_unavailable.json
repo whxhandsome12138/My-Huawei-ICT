@@ -1,6 +1,6 @@
 {
-  "schema_version": "0.1.0",
-  "request_id": "ab63769f-3137-4796-9004-1ab7b23ba1e7",
+  "schema_version": "1.0.0",
+  "request_id": "03fe59c3-9100-43c6-8c86-d435f71b3589",
   "status": "error",
   "data": null,
   "warnings": [
@@ -18,9 +18,11 @@
     "source_type": "recorded_kinect",
     "capture_mode": "offline_replay",
     "dataset_version": "unverified",
-    "pipeline_version": "0.1.0",
-    "feature_method_version": "es2-kinematics-wp3.1",
-    "criteria_version": "0.1.0",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": null,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": null,
     "reference_version": null,
     "source_record": null,
     "source_hash": null

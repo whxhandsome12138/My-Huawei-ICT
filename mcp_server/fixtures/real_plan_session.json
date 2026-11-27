@@ -1,13 +1,13 @@
 {
-  "schema_version": "0.1.0",
-  "request_id": "d0b2f72a-d53a-47fa-b674-669c4d0675d7",
+  "schema_version": "1.0.0",
+  "request_id": "90c1edd8-3140-4189-b251-62044d290040",
   "status": "ok",
   "data": {
     "exercise_id": "Es2",
     "records": [
       {
         "sample_id": "Es2-467acf3acb6a8191d6ef",
-        "assessment_id": "914478fd8408a1df",
+        "assessment_id": "bebcd7da300b8a8d",
         "quality": {
           "status": "pass",
           "n_frames": 1664,
@@ -18,15 +18,15 @@
         "n_frames": 1664,
         "torso_tilt_left_range": 37.489,
         "torso_tilt_right_range": 32.478,
-        "torso_tilt_left_excursion_up": 19.668,
-        "torso_tilt_right_excursion_up": 11.893,
+        "torso_tilt_left_excursion_up": 17.949,
+        "torso_tilt_right_excursion_up": 12.113,
         "repetition_count_left": 6.0,
         "repetition_count_right": 6.0,
         "observed_label_present": true
       },
       {
         "sample_id": "Es2-fbab3ba3e46a4ea94233",
-        "assessment_id": "17bfb7dc3544939e",
+        "assessment_id": "8783a0296e99494a",
         "quality": {
           "status": "pass",
           "n_frames": 587,
@@ -37,9 +37,9 @@
         "n_frames": 587,
         "torso_tilt_left_range": 25.653,
         "torso_tilt_right_range": 27.374,
-        "torso_tilt_left_excursion_up": 12.35,
-        "torso_tilt_right_excursion_up": 13.295,
-        "repetition_count_left": 4.0,
+        "torso_tilt_left_excursion_up": 12.674,
+        "torso_tilt_right_excursion_up": 13.828,
+        "repetition_count_left": 5.0,
         "repetition_count_right": 4.0,
         "observed_label_present": true
       }
@@ -67,9 +67,11 @@
     "source_type": "recorded_kinect",
     "capture_mode": "offline_replay",
     "dataset_version": "unverified",
-    "pipeline_version": "0.1.0",
-    "feature_method_version": "es2-kinematics-wp3.1",
-    "criteria_version": "0.1.0",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": null,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": null,
     "reference_version": null,
     "source_record": null,
     "source_hash": null

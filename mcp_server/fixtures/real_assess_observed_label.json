@@ -1,11 +1,11 @@
 {
-  "schema_version": "0.1.0",
-  "request_id": "8f554a16-358d-4ef5-a5f0-f968f05ec826",
+  "schema_version": "1.0.0",
+  "request_id": "f1706380-3177-4603-a65d-483e7f9f2504",
   "status": "ok",
   "data": {
     "sample_id": "Es2-467acf3acb6a8191d6ef",
     "exercise_id": "Es2",
-    "assessment_id": "914478fd8408a1df",
+    "assessment_id": "bebcd7da300b8a8d",
     "mode": "observed_label",
     "quality": {
       "status": "pass",
@@ -43,9 +43,11 @@
     "source_type": "recorded_kinect",
     "capture_mode": "offline_replay",
     "dataset_version": "unverified",
-    "pipeline_version": "0.1.0",
-    "feature_method_version": "es2-kinematics-wp3.1",
-    "criteria_version": "0.1.0",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": 72,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": "0.2.0",
     "reference_version": "es2-ref-1",
     "source_record": null,
     "source_hash": "698c50b546f1920abdb2caceee2ae21f839519e9a15512e4fcef552a35c9660f"

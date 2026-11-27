@@ -1,0 +1,373 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "3acd4183-8a4a-4dd1-8cf7-5c8ca9fc34d7",
+  "status": "ok",
+  "data": {
+    "sample_id": "Es2-fbab3ba3e46a4ea94233",
+    "exercise_id": "Es2",
+    "assessment_id": "8783a0296e99494a",
+    "mode": "kinematics",
+    "quality": {
+      "status": "pass",
+      "n_frames": 587,
+      "valid_frames": 586,
+      "valid_frame_ratio": 0.9983,
+      "reasons": []
+    },
+    "observed_label": {
+      "cTS": 16.0,
+      "cPO": 5.0,
+      "cCF": 11.0,
+      "label_kind": "historical_clinician",
+      "label_level": "subject_exercise",
+      "note": "历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。"
+    },
+    "predicted_score": null,
+    "diagnostics": {
+      "frame_rate_hz": 30.303,
+      "dropped_interval_ratio": 0.0,
+      "vertical_reference": "no_correction"
+    },
+    "features": [
+      {
+        "feature_id": "torso_tilt_left_peak",
+        "display_name": "左侧躯干额状面峰值倾角",
+        "value": 24.422,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "HipLeft"
+        ],
+        "source_frame_index": 61,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": false
+      },
+      {
+        "feature_id": "torso_tilt_right_peak",
+        "display_name": "右侧躯干额状面峰值倾角",
+        "value": 22.099,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "HipRight"
+        ],
+        "source_frame_index": 99,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": false
+      },
+      {
+        "feature_id": "torso_tilt_left_range",
+        "display_name": "左侧躯干倾角活动范围",
+        "value": 25.653,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "HipLeft"
+        ],
+        "source_frame_index": 61,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "torso_tilt_right_range",
+        "display_name": "右侧躯干倾角活动范围",
+        "value": 27.374,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "HipRight"
+        ],
+        "source_frame_index": 99,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "elbow_angle_left_median",
+        "display_name": "左肘关节角中位数",
+        "value": 152.884,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "ElbowLeft",
+          "WristLeft"
+        ],
+        "source_frame_index": 507,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "elbow_angle_right_median",
+        "display_name": "右肘关节角中位数",
+        "value": 147.366,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "ElbowRight",
+          "WristRight"
+        ],
+        "source_frame_index": 546,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "knee_angle_left_median",
+        "display_name": "左膝关节角中位数",
+        "value": 164.812,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "HipLeft",
+          "KneeLeft",
+          "AnkleLeft"
+        ],
+        "source_frame_index": 23,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "knee_angle_right_median",
+        "display_name": "右膝关节角中位数",
+        "value": 168.074,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "HipRight",
+          "KneeRight",
+          "AnkleRight"
+        ],
+        "source_frame_index": 250,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "hand_distance_median",
+        "display_name": "双手间距中位数",
+        "value": 0.679,
+        "unit": "source_length_unit",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "HandLeft",
+          "HandRight"
+        ],
+        "source_frame_index": 490,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "shoulder_distance_median",
+        "display_name": "双肩间距中位数",
+        "value": 0.292,
+        "unit": "source_length_unit",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "ShoulderRight"
+        ],
+        "source_frame_index": 171,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "hip_distance_median",
+        "display_name": "双髋间距中位数",
+        "value": 0.132,
+        "unit": "source_length_unit",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "HipLeft",
+          "HipRight"
+        ],
+        "source_frame_index": 173,
+        "time_s": null,
+        "evidence_level": "verified_paper",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "repetition_count_left",
+        "display_name": "左侧动作重复次数（峰值计数）",
+        "value": 5.0,
+        "unit": "count",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "HipLeft"
+        ],
+        "source_frame_index": 32,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "repetition_count_right",
+        "display_name": "右侧动作重复次数（峰值计数）",
+        "value": 4.0,
+        "unit": "count",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "HipRight"
+        ],
+        "source_frame_index": 70,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "torso_tilt_left_excursion_up",
+        "display_name": "左侧躯干倾角上向偏移（相对自身中位）",
+        "value": 12.674,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "HipLeft"
+        ],
+        "source_frame_index": 32,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "torso_tilt_left_excursion_down",
+        "display_name": "左侧躯干倾角下向偏移（相对自身中位）",
+        "value": 12.98,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderLeft",
+          "HipLeft"
+        ],
+        "source_frame_index": 493,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "torso_tilt_right_excursion_up",
+        "display_name": "右侧躯干倾角上向偏移（相对自身中位）",
+        "value": 13.828,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "HipRight"
+        ],
+        "source_frame_index": 70,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      },
+      {
+        "feature_id": "torso_tilt_right_excursion_down",
+        "display_name": "右侧躯干倾角下向偏移（相对自身中位）",
+        "value": 13.546,
+        "unit": "degree",
+        "status": "ok",
+        "reason": null,
+        "joints": [
+          "ShoulderRight",
+          "HipRight"
+        ],
+        "source_frame_index": 25,
+        "time_s": null,
+        "evidence_level": "derived_engineering",
+        "vertical_reference_independent": true
+      }
+    ],
+    "reference": {
+      "reference_version": "es2-ref-1",
+      "method": "per_subject_median_then_distribution",
+      "n_subjects": 71
+    },
+    "deviations": [
+      {
+        "evidence_id": "7bda2f0eac385dd0",
+        "feature_id": "torso_tilt_left_peak",
+        "unit": "degree",
+        "observed": 24.422,
+        "reference_value": 26.497,
+        "difference": -2.075,
+        "direction": "below_reference",
+        "frame_index": 61,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
+      },
+      {
+        "evidence_id": "36b41a33edb4292e",
+        "feature_id": "torso_tilt_right_peak",
+        "unit": "degree",
+        "observed": 22.099,
+        "reference_value": 24.967,
+        "difference": -2.868,
+        "direction": "below_reference",
+        "frame_index": 99,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
+      },
+      {
+        "evidence_id": "4768908f0abcbf9f",
+        "feature_id": "torso_tilt_left_range",
+        "unit": "degree",
+        "observed": 25.653,
+        "reference_value": 37.489,
+        "difference": -11.836,
+        "direction": "below_reference",
+        "frame_index": 61,
+        "reference_n_subjects": 71,
+        "interpretation_limit": "Descriptive difference against a dataset-relative reference; not a clinical judgement."
+      }
+    ]
+  },
+  "warnings": [
+    "历史 Kinect 记录回放，非实时采集，非手机等效。",
+    "observed_label=历史临床评分（受试者×动作）；features=骨架重算值；predicted_score 恒为 null。",
+    "参照分布为数据集内相对描述，不是临床常模；绝对倾角依赖未标定的相机竖直轴。"
+  ],
+  "error": null,
+  "provenance": {
+    "dataset": "KIMORE",
+    "source_type": "recorded_kinect",
+    "capture_mode": "offline_replay",
+    "dataset_version": "unverified",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": 72,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": "0.2.0",
+    "reference_version": "es2-ref-1",
+    "source_record": null,
+    "source_hash": "13f9c0b791d42e806f3abf38caa0438ef77c3af34c5ccbb5b17eaa548f12e583"
+  }
+}
