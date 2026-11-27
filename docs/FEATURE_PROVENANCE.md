@@ -17,7 +17,7 @@
 | :-- | :-- | :-- |
 | 采样率 | 30 Hz | `filtering.m`：`sample=30`；`butter(3, 2*1/30)` |
 | 低通滤波 | 3 阶 Butterworth，截止 1 Hz，`filtfilt` 零相位 | `filtering.m`：`filtCutOff=1` |
-| 主结局截头 | 丢掉滤波后的**前 30 帧** | `feat_extract_Ex2.m` 第 29–30 行 |
+| 主结局截头 | 丢掉滤波后的**前 29 帧**（MATLAB `x(30:end)`，30 是首个保留帧的下标） | `feat_extract_Ex2.m` 第 29–30 行 |
 | 控制因子截尾 | 丢掉**最后 15 帧** | 第 89–90、102–103、116–117、129–130、146–147、153–154、159、164、169 行 |
 | 竖直轴 | 相机竖直轴未标定，**不做修正** | 与 B 的 `vertical_reference.decision = no_correction` 一致 |
 
@@ -29,8 +29,8 @@
 
 | feature_id | 名称 | 单位 | 证据等级 | 作者脚本行 | 聚合规则 |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| `torso_tilt_left_peak` | 左侧躯干峰值倾角 | degree | verified_paper（β_l） | 3（atan2）、26（取负+滤波）、29（截头 30 帧）、60（findpeaks 取极大） | 极大值 |
-| `torso_tilt_right_peak` | 右侧躯干峰值倾角 | degree | verified_paper（β_r） | 4、27（仅滤波，不取负）、30、41 | 极大值 |
+| `torso_tilt_left_peak` | 左侧躯干峰值倾角 | degree | verified_paper（β_l） | 3（atan2）、26（取负+滤波）、29（截头 29 帧）、60（findpeaks 取极大） | 每次重复极大值中的最大者 |
+| `torso_tilt_right_peak` | 右侧躯干峰值倾角 | degree | verified_paper（β_r） | 4、27（仅滤波，不取负）、30、41 | 每次重复极大值中的最大者 |
 | `torso_tilt_left_range` | 左侧倾角活动范围 | degree | derived_engineering | 26、29、60、61、62 | max − min |
 | `torso_tilt_right_range` | 右侧倾角活动范围 | degree | derived_engineering | 27、30、41、42、43 | max − min |
 | `torso_tilt_left_excursion_up` | 左侧上向偏移 | degree | derived_engineering | 26、29 | max − median |
@@ -61,19 +61,19 @@
 
 复算脚本 `tools/verify_b_features.py`，结果 `tools/verify_b_features.json`。样本反查：1664 帧唯一命中 `Kimore/CG/Expert/E_ID1/Es2/Raw/JointPosition011214_103845.csv`（shape 1664×100）。
 
-| 特征 | B 返回值 | 本项目复算 | 差 | 判定 |
+| 特征 | B 1.0.0 返回值 | 本项目复算（已修正） | 差 | 判定 |
 | :-- | --: | --: | --: | :-- |
 | `torso_tilt_left_range` | 37.489 | 37.5079 | +0.019 | 一致 |
 | `torso_tilt_right_range` | 32.478 | 32.4892 | +0.011 | 一致 |
 | `elbow_angle_left_median` | 164.214 | 164.1623 | −0.052 | 一致 |
 | `knee_angle_left_median` | 166.161 | 166.1415 | −0.019 | 一致 |
 | `shoulder_distance_median` | 0.283 | 0.28257 | −0.0004 | 一致 |
-| `repetition_count_left` | 6 | 6 | 0 | 一致 |
-| `torso_tilt_left_peak` | −26.497 | +26.5182（左信号极大） | 幅度差 0.021 | **符号相反** |
-| `torso_tilt_right_peak` | +20.901 | −20.9116（右信号极小） | 幅度差 0.011 | **符号相反** |
-| `repetition_count_right` | 6 | 5 | 1 | **口径差异** |
+| `repetition_count_left` | 6 | 6（峰）/ 6（谷） | 0 | 一致 |
+| `torso_tilt_left_peak` | −26.497 | **+26.5182**（左信号极大） | 幅度差 0.021 | B 1.0.0 偏差（左侧未取负） |
+| `torso_tilt_right_peak` | +20.901 | **+20.9116**（右信号极大） | 幅度差 0.011 | 一致 |
+| `repetition_count_right` | 6 | 6（峰）/ 5（谷） | 0 | 一致 |
 
-### 3.1 符号约定：作者实现本身左右不对称
+### 3.1 符号约定：作者只对左侧取负
 
 `feat_extract_Ex2.m` 第 26–27 行是：
 
@@ -82,34 +82,57 @@ angolobustoL = -filtering(angolobustoL);   % 左：取负
 angolobustoR =  filtering(angolobustoR);   % 右：不取负
 ```
 
-也就是说作者对左侧取了负号、对右侧没有，两个主结局不在同一个符号框架里。B 的返回值相当于在作者信号上**整体再取一次负**（左 −26.497 = −26.518，右 +20.901 = +20.912），因此两侧符号都与作者相反、幅度一致。
+作者口径下：左信号范围 [−10.990, **+26.518**]，右信号范围 [−11.578, **+20.912**]，两侧峰值都是正的。
 
-**这是约定问题，不是算法差异**。但因为「−26.5°」和「+26.5°」在临床话术里是往相反方向倾，必须二选一并写死：
+**这条结论经历过一次错误的往返，记下来以免重犯**：本项目早先的复算脚本对**两侧都取负**
+（`ang = -filtering(ang)`），于是右侧算出了 −20.912，我据此以为「两侧符号都相反」。
+实际是只差左侧一个负号。修正后的复算脚本见 `tools/verify_features.py`（按侧判断是否取负）。
 
-- 建议采用 B 的**对称约定**（左负右正，符合"偏离中立位方向"的直觉），
-- 在 `query_criteria` 每个主结局特征下增加 `sign_convention` 字段，值形如 `"negative = 向受试者左侧偏离"`；
-- 本体里给 `Feature` 加 `hasSignConvention` 属性，指向一个 `SignConvention` 个体。
+**最终口径（以论文与作者脚本为准）**：每个特征的正值表示**向该特征对应的那一侧偏离**
+（左特征正 = 向左，右特征正 = 向右）。B 侧按此改实现，随 1.1.0 发布；本体里
+`sign_left_positive` / `sign_right_positive` 两个 `SignConvention` 个体同步。
 
-### 3.2 重复次数：MATLAB `findpeaks` 与 scipy `find_peaks` 不等价
+> 补充一个工程观察（不是论文规定）：两侧信号存在约 **+18.6°** 的相机几何偏置
+> （`ShoulderRight.x − ShoulderLeft.x ≈ +0.265`），所以绝对角度不宜直接当「偏离竖直轴多少度」念，
+> 幅度应看 `range` / `excursion`。
 
-作者用 `findpeaks(x, 'MINPEAKHEIGHT', mean(x), 'MINPEAKDISTANCE', floor(n/10))` 统计峰个数。本项目用 `scipy.signal.find_peaks(x, height=mean(x), distance=floor(n/10))` 复算时，左 6 对 6、右得 5 而 B 报 6。
+### 3.2 重复次数：修正符号后差异自动消失
 
-两者在**平台段（等值连续点）**和**边界峰**的处理规则不同，属方法学差异而非数据错误。三种收口方式，任选其一并写进文档：
+按作者脚本的峰检测（`height=mean`、`distance=⌊n/10⌋`）与谷检测（对 `max(x)−x` 找峰、
+`distance=⌊n/8⌋`）在 E_ID1 上重算：
 
-1. 以作者 MATLAB 结果为准（需要 Octave 复跑，B 侧做）；
-2. 以 B 的 Python 实现为准，文档里声明"MATLAB `findpeaks` 的 scipy 等价实现已逐样本比对，Es2 上 77 段中 N 段一致"；
-3. 把重复次数降级为 `descriptive`，只做"是否完成 5 次"的二值判断（论文原文即 5 次），不参与任何推理。
+| | 峰 | 谷 |
+| :-- | --: | --: |
+| 左（作者口径 = −raw） | 6 | 6 |
+| 右（作者口径 = +raw） | 6 | 5 |
 
-**建议选 3**：论文只声明"每个动作连续做 5 次"，把 6/5 之争变成"完成/未完成"的判断，风险最低，也更符合"不做无依据推断"的定位。
+早先「右 5 vs B 6」的差异，是因为对右侧取负后数的是**谷**，不是峰。修正后两侧峰数都是 6，
+与 B 一致，原先「MATLAB `findpeaks` 与 scipy `find_peaks` 对平台段处理不同」的归因不成立。
+
+**收口方式（已与 B 约定，随 1.1.0 发布）**：论文只说「每个动作连续做 5 次」，那是**协议要求**；
+算法数出来的是**描述量**。两个都给，不混用：
+
+```json
+{
+  "repetition_count_left": 6,
+  "repetition_count_right": 6,
+  "repetition_completed_expected": true,
+  "repetition_count_basis": "descriptive_only"
+}
+```
+
+智能体话术据此改成三档：完成 = 是 → 说「满足 5 次要求」；完成 = 否 → 说「少于 5 次，
+可能是录制提前结束或峰值漏检」；检测数明显多于 5（如 6–7）→ 说「计数偏多，可能多计 1–2 次」，
+**不归因受试者**。
 
 ## 4. 需要写进 `query_criteria` 与本体的事项
 
 | 事项 | 落点 | 负责 |
 | :-- | :-- | :-- |
-| 主结局的符号约定（左负右正） | `query_criteria` 增加 `sign_convention`；`Feature.hasSignConvention` | C 写本体，B 加字段 |
+| 主结局的符号约定（正值 = 向该侧偏离） | `query_criteria` 增加 `sign_convention`；`Feature.hasSignConvention` | C 写本体，B 加字段 |
 | 长度单位是相机原始单位，不是米 | `unit` 已为 `source_length_unit`，需在 `display_name` 或 `warnings` 里补一句 | B |
 | 中位数聚合是工程口径 | `evidence_level` 保持 `verified_paper`（指标定义源论文），但增加 `aggregation: median` 字段 | B |
-| 重复次数改为二值"是否完成 5 次" | `repetition_count_*` 保留数值，另加 `repetition_complete: bool` | B（C 加判定规则） |
+| 重复次数保留描述量 + 布尔判定 | `repetition_count_*` 保留数值，另加 `repetition_completed_expected: bool` 与 `repetition_count_basis` | B（C 加判定规则） |
 | 缺 cTS 的样本不得产生偏离结论 | SHACL 约束 | C |
 | 绝对倾角依赖未标定竖直轴 | `vertical_reference_independent=false` 已有，解释文案需引用 | C |
 
@@ -121,4 +144,7 @@ angolobustoR =  filtering(angolobustoR);   % 右：不取负
 - 用作者公开实现做参照，第三方（本项目）独立复现，误差 0.02°；
 - 差异点全部可解释（符号约定、峰计数口径），没有不可解释的黑箱。
 
-文档里建议这样写：**"我们在 1 条真实录制（1664 帧）上，按作者脚本逐行复现了 9 个特征，最大绝对误差 0.052°，并定位出两处口径差异（符号约定、峰值计数），已在 `query_criteria` 中显式声明。"** —— 一句话就是一个可验证的效度声明。
+文档里建议这样写：**"我们在 1 条真实录制（1664 帧）上，按作者脚本逐行复现了 9 个特征，最大绝对误差 0.052°；过程中发现并纠正了自身一处符号实现错误（对右侧多取了一次负号），最终口径与作者脚本一致，两处口径差异（符号约定、峰值计数）已在 `query_criteria` 中显式声明。"** —— 一句话就是一个可验证的效度声明。
+
+> 这段「先错后对」不该删。它证明复算不是抄一遍数字，而是真的把作者脚本逐行对过；
+> 也是答辩里被问「你怎么知道你对」时最好的答案。

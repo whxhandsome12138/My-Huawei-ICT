@@ -136,6 +136,9 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
                 raw = await session.call_tool("assess_exercise", {"sample_id": FULL})
                 env = envelope_of(raw)
                 vals = feature_values(env)
+                # 只断言「不随符号约定变化」的数值：range 与右侧峰在 1.0.0 / 1.1.0 都同值。
+                # 左侧峰的符号在 1.1.0 会翻正（作者口径），故不在此断言，见 docs/FEATURE_PROVENANCE.md §3。
+                # deviations 条数会随符号修正浮动，断言「有偏离点且不超过 5 条」。
                 ok = (
                     env["status"] == "ok"
                     and len(vals) == 17
@@ -143,9 +146,9 @@ async def run(port: int, out_dir: str, host: str = "127.0.0.1") -> int:
                     and abs(vals.get("torso_tilt_right_peak", 0) - 20.901) < 1e-6
                     and env["data"]["observed_label"]["cTS"] == 45.0
                     and env["data"]["predicted_score"] is None
-                    and len(env["data"]["deviations"]) == 3
+                    and 1 <= len(env["data"]["deviations"]) <= 5
                 )
-                return ok, f"features={len(vals)} left_range={vals.get('torso_tilt_left_range')} cTS={env['data']['observed_label']['cTS']} bytes={bytes_of(raw)}"
+                return ok, f"features={len(vals)} left_range={vals.get('torso_tilt_left_range')} cTS={env['data']['observed_label']['cTS']} dev={len(env['data']['deviations'])} bytes={bytes_of(raw)}"
 
             await ck.check("B 工具", "assess_exercise 17 特征 + cTS + predicted=null", t_assess)
 

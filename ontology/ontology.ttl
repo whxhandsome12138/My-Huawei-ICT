@@ -246,8 +246,9 @@ kimore:exercise_Es1 a owl:NamedIndividual, kimore:Exercise ;
 kimore:exercise_Es2 a owl:NamedIndividual, kimore:Exercise ;
     rdfs:label "Es2 躯干侧倾（双臂上举持杆）"@zh ;
     kimore:hasScript "Script/main_Ex2.m" , "Script/preproc_Ex2.m" , "Script/feat_extract_Ex2.m" , "Script/filtering.m" ;
+    kimore:paperCitation "Capecci et al., The KIMORE Dataset, IEEE TNSRE 27(7):1436-1448, 2019, p.1441 §II.D — arms in extension, raised above the head with elbows completely extended, holding a bar with both hands (starting position)" ;
     kimore:version "1.0" ;
-    rdfs:comment "v1 唯一支持评估的动作，17 个特征见 features.ttl，口径见 query_criteria。"@zh .
+    rdfs:comment "v1 唯一支持评估的动作，17 个特征见 features.ttl，口径见 query_criteria。动作名与起始姿势以论文 p.1441 §II.D 原文为准。"@zh .
 
 kimore:exercise_Es3 a owl:NamedIndividual, kimore:Exercise ;
     rdfs:label "Es3 躯干屈伸"@zh ;
@@ -265,8 +266,8 @@ kimore:exercise_Es5 a owl:NamedIndividual, kimore:Exercise ;
 # 五、实例：Es2 的特征（示范三条，其余按同一模板批量生成）
 ##############################################################################
 
-kimore:sign_left_negative a owl:NamedIndividual, kimore:SignConvention ;
-    rdfs:label "负值表示向受试者左侧偏离"@zh ;
+kimore:sign_left_positive a owl:NamedIndividual, kimore:SignConvention ;
+    rdfs:label "正值表示向受试者左侧偏离（作者脚本对左侧取负，故正=向左）"@zh ;
     kimore:version "1.0" .
 
 kimore:sign_right_positive a owl:NamedIndividual, kimore:SignConvention ;

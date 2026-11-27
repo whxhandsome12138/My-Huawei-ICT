@@ -42,7 +42,7 @@ kimore:feature_torso_tilt_left_peak a owl:NamedIndividual, kimore:Feature ;
     kimore:aggregation "max" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
     rdfs:comment "作者第 26 行对左侧取负，右侧（第 27 行）不取负，本项目统一为左负右正。"@zh .
 kimore:feature_torso_tilt_right_peak a owl:NamedIndividual, kimore:Feature ;
@@ -68,7 +68,7 @@ kimore:feature_torso_tilt_left_range a owl:NamedIndividual, kimore:Feature ;
     kimore:aggregation "max-minus-min" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
     rdfs:comment "左侧信号丢前 30 帧后再取极差。"@zh .
 kimore:feature_torso_tilt_right_range a owl:NamedIndividual, kimore:Feature ;
@@ -178,7 +178,7 @@ kimore:feature_repetition_count_left a owl:NamedIndividual, kimore:Feature ;
     kimore:aggregation "count" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent true ;
-    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
     rdfs:comment "MATLAB findpeaks 与 scipy find_peaks 在平台段不等价，v1 只用于『是否完成 5 次』二值判断。"@zh .
 kimore:feature_repetition_count_right a owl:NamedIndividual, kimore:Feature ;
@@ -204,7 +204,7 @@ kimore:feature_torso_tilt_left_excursion_up a owl:NamedIndividual, kimore:Featur
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
     rdfs:comment "相对首个极值的上向偏移，依赖未标定的相机竖直轴。"@zh .
 kimore:feature_torso_tilt_left_excursion_down a owl:NamedIndividual, kimore:Feature ;
@@ -217,7 +217,7 @@ kimore:feature_torso_tilt_left_excursion_down a owl:NamedIndividual, kimore:Feat
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_negative ;
+    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
     rdfs:comment "相对首个极值的下向偏移。"@zh .
 kimore:feature_torso_tilt_right_excursion_up a owl:NamedIndividual, kimore:Feature ;

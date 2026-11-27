@@ -44,5 +44,7 @@ dist/*.zip
 !skills/dist/*.zip
 *.tar.gz
 
-# generated self-check reports
+# 自检与运行产物
 mcp_server/reports/
+*.log
+demo_try.log
