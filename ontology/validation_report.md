@@ -1,6 +1,6 @@
 # 本体与 SHACL 约束校验报告
 
-数据图：`ontology.ttl`（264 三元组）+ `features.ttl`（269 三元组）+ `examples_good.ttl`
+数据图：`ontology.ttl`（264 三元组）+ `features.ttl`（261 三元组）+ `examples_good.ttl`
 约束图：`shapes.ttl`（196 三元组）
 
 ## 一、期望
