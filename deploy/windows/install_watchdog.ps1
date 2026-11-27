@@ -39,10 +39,18 @@ if (-not (Test-Path $ScriptPath)) {
     exit 1
 }
 
-$arg = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -McpPort {1} -DemoPort {2}' -f `
-    $ScriptPath, $McpPort, $DemoPort
+$vbs = Join-Path $PSScriptRoot "watchdog_hidden.vbs"
+if (-not (Test-Path $vbs)) {
+    "missing launcher: $vbs"
+    exit 1
+}
 
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arg
+# Run through a VBS launcher: powershell.exe started by Task Scheduler always
+# allocates a console first, so -WindowStyle Hidden still flashes a black window
+# every 5 minutes. WScript.Shell.Run(cmd, 0, False) creates no console at all.
+$arg = '//nologo "{0}" {1} {2}' -f $vbs, $McpPort, $DemoPort
+
+$action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument $arg
 $trigger = New-ScheduledTaskTrigger -Once -At ((Get-Date).AddMinutes(1)) `
     -RepetitionInterval (New-TimeSpan -Minutes 5)
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries `

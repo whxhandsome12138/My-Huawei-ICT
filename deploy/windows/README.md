@@ -7,6 +7,9 @@
 
 | 文件 | 干什么 |
 | :-- | :-- |
+| `start_all.ps1` | **一键全起**：启用看门狗 → 起虚拟机等 Nexent 就绪 → 起 MCP/演示页 → 起 3300 转发 |
+| `stop_all.ps1` | **一键全停**：先停看门狗（否则 5 分钟又被拉起）→ 关 3300/9701/9700 → 正常关机虚拟机 |
+| `watchdog_hidden.vbs` | 看门狗任务的启动器，用 `wscript.exe` 调 `watchdog.ps1`，**不建控制台**（见下文「弹窗」） |
 | `boot.ps1` | 开机后一次把环境拉起来：MCP 服务 + 演示页 + （可选）内网转发 |
 | `watchdog.ps1` | 每 5 分钟检查端口，掉了就重启；由 `install_watchdog.ps1` 注册 |
 | `install_watchdog.ps1` | 注册 / 卸载那个 5 分钟任务，不需要管理员权限 |
@@ -44,6 +47,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install_watchdog.ps1 -Uninst
 
 `boot.ps1` 只有给了 `-Vmx` 才会调 `vmrun`；没给就只处理本机进程。想彻底关掉某台机器的自启，检查三处：
 `shell:startup` 文件夹、`schtasks /Query` 里带项目名的任务、`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`。
+
+## 为什么以前会莫名弹一个 PowerShell 黑窗
+
+计划任务原来把 `powershell.exe` 直接当 action。Task Scheduler 在交互会话里启动进程时，**会先给它分配一个控制台**，
+`-WindowStyle Hidden` 只隐藏窗口，控制台本身仍会被创建 → 每 5 分钟屏幕上闪一下黑框。
+
+修法是让任务去调 `wscript.exe` + `watchdog_hidden.vbs`，由 VBS 用 `WScript.Shell.Run(cmd, 0, False)` 起 PowerShell：
+`0` = 完全不建控制台，`False` = 不等待。这样任务照常每 5 分钟跑，但屏幕上什么都看不到。
+
+```powershell
+# 确认动作已经不是 powershell.exe
+(Get-ScheduledTask -TaskName 'LiaoyuYoufangWatchdog').Actions | Format-List Execute, Arguments
+# 期望 Execute: wscript.exe
+```
 
 ## 四个坑（都踩过，脚本里已经绕开）
 
