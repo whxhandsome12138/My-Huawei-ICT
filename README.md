@@ -80,7 +80,8 @@ cd nexent && bash deploy.sh docker --image-source mainland
 # ② 在 Nexent 里注册 MCP：资源仓库 → MCP 仓库 → 添加 → 远程
 #    名称 kimore_eval   URL http://<你的IP>:9100/sse
 
-# ③ 导入智能体：Agent 仓库 → 导入 → 选 agent/liaoyuyoufang-agent.zip
+# ③ 导入智能体：智能体配置页 → 导入 → 选 liaoyuyoufang-agent-config-1.0.0.zip
+#    （「我的 Agent」页不提供导入入口；本版前端也没有导出按钮，包由 tools/build_agent_package.py 重建）
 # ④ 上传技能：skills/dist/S1.zip ... S5.zip
 ```
 
@@ -100,6 +101,7 @@ cd nexent && bash deploy.sh docker --image-source mainland
 | `GPP-….zip` | 1.67 GB | 患者组作者包（`BackPain` / `Stroke` / `Parkinson`） |
 | `archive.zip` | 178 MB | 精简包（只有骨架 + 标签），只要跑服务下这个就够 |
 | `draftKIMORE.pdf` | 1.9 MB | 论文草稿（口径依据） |
+| `liaoyuyoufang-agent-config-1.0.0.zip` | 16 KB | 智能体配置包（`agent.json` + 五个技能），导入 Nexent 用 |
 | `SHA256SUMS.txt` | 1 KB | 上述文件的 SHA256 |
 
 为什么走 Release 不走 `git add`：Git 单文件硬上限 100 MB，`CG`/`GPP` 合计 3.5 GB 会被直接拒收；

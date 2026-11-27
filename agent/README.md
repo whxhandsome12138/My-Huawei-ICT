@@ -3,25 +3,38 @@
 | 文件 | 说明 |
 | :-- | :-- |
 | `system-prompt.md` | 完整系统提示词，直接贴进 Nexent「模型与提示词 → 系统提示词」 |
-| `liaoyuyoufang-agent.zip` | **需要你自己导出**（见下），Nexent 的智能体包：配置 + 全部技能 |
+| `build_agent_package.py` | 生成配置包的脚本（见 `../tools/build_agent_package.py`） |
+| Release 附件 `liaoyuyoufang-agent-config-1.0.0.zip` | 可导入的配置包：`agent.json` + 五个 `skills/*/SKILL.md` |
 
-## 为什么 zip 不在仓库里
+## 配置包在哪
 
-Nexent 导出的 ZIP 里带的是**你那个环境**的配置：模型名、MCP 服务 ID、知识库 ID。
-换台机器导入时这些都对不上，导出再提交反而会误导人。
+> https://github.com/whxhandsome12138/My-Huawei-ICT/releases/download/data-v1.0/liaoyuyoufang-agent-config-1.0.0.zip
 
-所以仓库只放「人能读懂、能手工复现」的提示词，ZIP 走 Release 附件。
+`agent.json` 的结构照 Nexent 官方导出格式（`name` / `version` / `model` /
+`prompt{role,requirements,examples}` / `tools[]` / `skills[]` / `collaborators[]` / `memory`）。
 
-## 自己导出一份
+## 为什么不是「Nexent 原生导出」的
 
-1. Nexent 左侧 → **Agent 仓库 → 我的 Agent** → 找到「聊愈有方 · 动作评估」
-2. 先**发布**一个版本（未发布不能导）。
-3. 右上角 **导出** → 选 **ZIP**（含配置 + 所有技能包；选 JSON 只有配置）。
-4. 把 zip 放到 `agent/liaoyuyoufang-agent.zip`，或直接作为 GitHub Release 的附件。
+本项目使用的 Nexent v2.5.0 这一版，前端**没有**导出入口：
+
+- 「Agent 仓库 → 我的 Agent」卡片上的 `...` 菜单只有 `申请上架 / 评估 / 调用与分享 / 删除`；
+- 配置页（`/zh/agents/<id>?from=agent-space&tab=mine`）的 `...` 里也没有导出。
+
+官方文档（`integration-out/agents-export.html`）描述的字段结构仍然可用，所以按文档结构
+从仓库单一真源重建了一份等价配置包——**提示词与技能都取自本仓库**，可逐字核对。
+
+## 自己重建一份
+
+```bash
+python tools/build_agent_package.py          # 生成 agent/dist/聊愈有方-agent-配置包.zip
+python tools/build_agent_package.py --check  # 只校验真源是否齐全
+```
+
+改了 `system-prompt.md` 或任一 `skills/*/SKILL.md` 之后重跑即可，包内文件随之更新。
 
 ## 导入到另一套 Nexent
 
-1. Agent 仓库 → **导入** → 上传 zip。
+1. **智能体配置** 页 → 导入入口 → 上传 zip（「我的 Agent」页不再提供导入入口）。
 2. 系统会做**依赖预检**，五类依赖逐个确认：
 
 | 依赖 | 会怎样 |
