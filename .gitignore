@@ -43,3 +43,5 @@ desktop.ini
 dist/*.zip
 !skills/dist/*.zip
 *.tar.gz
+
+mcp_server/reports/

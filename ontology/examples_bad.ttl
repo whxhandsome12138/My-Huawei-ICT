@@ -1,4 +1,4 @@
-@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix kimore: <https://kimore.liaoyuyoufang.example/ontology#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 

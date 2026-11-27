@@ -1,6 +1,6 @@
-# 腰衡 MCP 服务（回放/契约实现）
-# 构建：docker build -t yaoheng/mcp-kimore:0.1.0 .
-# 运行：docker run -p 9100:9100 yaoheng/mcp-kimore:0.1.0
+# 聊愈有方 MCP 服务（回放/契约实现）
+# 构建：docker build -t liaoyuyoufang/mcp-kimore:0.1.0 .
+# 运行：docker run -p 9100:9100 liaoyuyoufang/mcp-kimore:0.1.0
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \

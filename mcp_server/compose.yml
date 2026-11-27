@@ -1,4 +1,4 @@
-# 只起「腰衡」的 MCP 服务，不碰 Nexent 自己的 compose。
+# 只起「聊愈有方」的 MCP 服务，不碰 Nexent 自己的 compose。
 # Nexent 请按官方 deploy.sh 部署；这里额外起一个容器，把 9100 暴露给 Nexent。
 #
 #   docker compose -f mcp_server/compose.yml up -d --build
@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: yaoheng/mcp-kimore:0.1.0
+    image: liaoyuyoufang/mcp-kimore:0.1.0
     container_name: mcp-kimore
     restart: unless-stopped
     ports:

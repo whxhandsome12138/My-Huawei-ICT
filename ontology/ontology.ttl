@@ -1,4 +1,4 @@
-@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix kimore: <https://kimore.liaoyuyoufang.example/ontology#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
@@ -6,7 +6,7 @@
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
 ##############################################################################
-# 「腰衡」评估标准本体 v1.0
+# 「聊愈有方」评估标准本体 v1.0
 #
 # 设计目标（对应赛题评分项「检索-推理双驱动」「决策可溯源」「半自动本体构建」）：
 #   1. 每个可被智能体引用的度量，都必须能追到「论文出处 + 代码行 + 聚合口径」；
@@ -19,8 +19,8 @@
 #   kimore:exercise_Es2           与 MCP 的 exercise_id 一一对应
 ##############################################################################
 
-<https://kimore.yaoheng.example/ontology> a owl:Ontology ;
-    rdfs:label "腰衡 · 腰痛康复动作评估标准本体"@zh ;
+<https://kimore.liaoyuyoufang.example/ontology> a owl:Ontology ;
+    rdfs:label "聊愈有方 · 腰痛康复动作评估标准本体"@zh ;
     owl:versionInfo "1.0.0" ;
     rdfs:comment "以 KIMORE 五个临床动作与 EAAQ 三层评分为底座的可溯源评估标准。"@zh .
 

@@ -3,7 +3,7 @@
 | 文件 | 说明 |
 | :-- | :-- |
 | `system-prompt.md` | 完整系统提示词，直接贴进 Nexent「模型与提示词 → 系统提示词」 |
-| `yaoheng-agent.zip` | **需要你自己导出**（见下），Nexent 的智能体包：配置 + 全部技能 |
+| `liaoyuyoufang-agent.zip` | **需要你自己导出**（见下），Nexent 的智能体包：配置 + 全部技能 |
 
 ## 为什么 zip 不在仓库里
 
@@ -14,10 +14,10 @@ Nexent 导出的 ZIP 里带的是**你那个环境**的配置：模型名、MCP 
 
 ## 自己导出一份
 
-1. Nexent 左侧 → **Agent 仓库 → 我的 Agent** → 找到「腰衡 · 动作评估」
+1. Nexent 左侧 → **Agent 仓库 → 我的 Agent** → 找到「聊愈有方 · 动作评估」
 2. 先**发布**一个版本（未发布不能导）。
 3. 右上角 **导出** → 选 **ZIP**（含配置 + 所有技能包；选 JSON 只有配置）。
-4. 把 zip 放到 `agent/yaoheng-agent.zip`，或直接作为 GitHub Release 的附件。
+4. 把 zip 放到 `agent/liaoyuyoufang-agent.zip`，或直接作为 GitHub Release 的附件。
 
 ## 导入到另一套 Nexent
 

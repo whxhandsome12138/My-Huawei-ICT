@@ -1,5 +1,5 @@
 {
-  "name": "腰衡 · Es2 评估评测集",
+  "name": "聊愈有方 · Es2 评估评测集",
   "version": "1.0",
   "created": "2026-11-25",
   "notes": "每题的 expected 是判分要点，不是标准答案全文。导入 Nexent 智能体评估时，question 列对应“问题”，expected 列对应“期望答案”。",

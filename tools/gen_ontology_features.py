@@ -17,8 +17,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-FIXTURE = ROOT / "deliver" / "handoff" / "kimore_mcp_handoff_2026-11-24" / "contracts" / "examples" / "real_assess_success.json"
-OUT = ROOT / "deliver" / "ontology" / "features.ttl"
+
+# 仓库内布局（mcp_server/fixtures/…）优先；在老工作区里则回落到 deliver/ 布局
+_CANDIDATES = [
+    ROOT / "mcp_server" / "fixtures" / "real_assess_success.json",
+    ROOT / "deliver" / "handoff" / "kimore_mcp_handoff_2026-11-24" / "contracts" / "examples" / "real_assess_success.json",
+    ROOT / "deliver" / "replay_mcp" / "fixtures" / "real_assess_success.json",
+]
+FIXTURE = next((p for p in _CANDIDATES if p.exists()), _CANDIDATES[0])
+OUT = next((p for p in [ROOT / "ontology" / "features.ttl", ROOT / "deliver" / "ontology" / "features.ttl"]
+            if p.parent.exists()), ROOT / "ontology" / "features.ttl")
 
 PAPER = "Capecci et al. 2019, KIMORE, p.1441 sII.D"
 SCRIPT = "feat_extract_Ex2.m"
@@ -91,7 +99,7 @@ TEMPLATE = '''kimore:feature_{fid} a owl:NamedIndividual, kimore:Feature ;
 {sign}    kimore:version "1.0"{comment} .
 '''
 
-HEADER = '''@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+HEADER = '''@prefix kimore: <https://kimore.liaoyuyoufang.example/ontology#> .
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 

@@ -1,11 +1,11 @@
-@prefix kimore: <https://kimore.yaoheng.example/ontology#> .
+@prefix kimore: <https://kimore.liaoyuyoufang.example/ontology#> .
 @prefix sh:     <http://www.w3.org/ns/shacl#> .
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 
 ##############################################################################
-# 「腰衡」本体约束 v1.0（与 ontology.ttl 1.0.0 配套）
+# 「聊愈有方」本体约束 v1.0（与 ontology.ttl 1.0.0 配套）
 #
 # 这套 shapes 的作用不是「数据校验」，而是把评分表里的承诺变成可执行的规则：
 #   - 决策可溯源  -> Deviation 必须挂 Assessment、Feature 必须挂代码行

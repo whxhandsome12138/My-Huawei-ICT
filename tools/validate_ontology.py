@@ -1,4 +1,4 @@
-"""校验「腰衡」本体与 SHACL 约束。
+"""校验「聊愈有方」本体与 SHACL 约束。
 
 用法：
     python tools/validate_ontology.py

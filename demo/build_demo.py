@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""生成「腰衡」单文件演示页（离线回放版）。
+"""生成「聊愈有方」单文件演示页（离线回放版）。
 
 数据来源：B 交付包 contracts/examples 下的 10 个真实响应 JSON。
 生成物：deliver/demo_site/index.html —— 双击即可打开，无任何依赖。
@@ -158,7 +158,7 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>腰衡 · 动作评估（回放演示）</title>
+<title>聊愈有方 · 动作评估（回放演示）</title>
 <style>
   :root{
     --ink:#1c1c1e; --muted:#6b6b70; --line:#e3e3e6; --bg:#fbfbfa;
@@ -255,7 +255,7 @@ HTML = r"""<!DOCTYPE html>
 <body>
 <div class="wrap">
   <header>
-    <h1>腰衡 · 动作评估</h1>
+    <h1>聊愈有方 · 动作评估</h1>
     <div class="sub">面向腰痛居家康复的动作评估与随访 · 离线回放演示</div>
   </header>
 

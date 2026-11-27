@@ -7,7 +7,7 @@ services:
     build:
       context: ../mcp_server
       dockerfile: Dockerfile
-    image: yaoheng/mcp-kimore:0.1.0
+    image: liaoyuyoufang/mcp-kimore:0.1.0
     container_name: mcp-kimore
     restart: unless-stopped
     expose:
@@ -26,7 +26,7 @@ services:
 
   web:
     image: nginx:1.27-alpine
-    container_name: yaoheng-web
+    container_name: liaoyuyoufang-web
     restart: unless-stopped
     depends_on:
       mcp:

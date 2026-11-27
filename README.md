@@ -1,5 +1,10 @@
-# 腰衡 · KIMORE 动作评估智能体（开源版）
+# 聊愈有方 · KIMORE 动作评估智能体（开源版）
 
+> **聊愈有方**（谐音「疗愈有方」）——
+> **聊**：对话式智能体，语音引导、结果解释、随访对话；
+> **愈**：愈合进展追踪；
+> **有方**：干预有方法。
+>
 > 把 KIMORE 数据集里五个临床动作，做成**可调用、可溯源、可版本化**的评估工具；
 > 让 Nexent 上的智能体在「选动作 → 评动作 → 解释 → 调方案 → 吸收治疗师修正」的闭环里越用越准。
 >
@@ -75,7 +80,7 @@ cd nexent && bash deploy.sh docker --image-source mainland
 # ② 在 Nexent 里注册 MCP：资源仓库 → MCP 仓库 → 添加 → 远程
 #    名称 kimore_eval   URL http://<你的IP>:9100/sse
 
-# ③ 导入智能体：Agent 仓库 → 导入 → 选 agent/yaoheng-agent.zip
+# ③ 导入智能体：Agent 仓库 → 导入 → 选 agent/liaoyuyoufang-agent.zip
 # ④ 上传技能：skills/dist/S1.zip ... S5.zip
 ```
 
@@ -136,9 +141,9 @@ bash deploy/bootstrap.sh
 ## 引用
 
 ```bibtex
-@misc{yaoheng2026,
-  title  = {腰衡: 面向腰痛居家康复的可进化动作评估与随访决策智能体},
-  author = {Tongji University Yaoheng Team},
+@misc{liaoyuyoufang2026,
+  title  = {聊愈有方: 面向腰痛居家康复的可进化动作评估与随访决策智能体},
+  author = {Tongji University Liaoyu Youfang Team},
   year   = {2026},
   note   = {Built on Nexent (MIT, Huawei Technologies Co., Ltd.) and the KIMORE dataset}
 }

@@ -58,7 +58,7 @@ curl -s http://127.0.0.1/healthz            # ok
 curl -sN http://127.0.0.1/sse | head -3     # 应该立刻出 event: endpoint
 ```
 
-浏览器打开 `http://<公网IP>/` —— 看到「腰衡」演示页就成功了。
+浏览器打开 `http://<公网IP>/` —— 看到「聊愈有方」演示页就成功了。
 
 在 Nexent 里注册 MCP：
 

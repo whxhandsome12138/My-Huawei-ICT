@@ -58,7 +58,7 @@ def main() -> None:
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.ThreadingTCPServer((args.host, args.port), handler) as httpd:
         local = f"http://127.0.0.1:{args.port}/"
-        print("\n  腰衡 · 动作评估（回放演示）")
+        print("\n  聊愈有方 · 动作评估（回放演示）")
         print("  " + "-" * 46)
         print(f"  本机：   {local}")
         for ip in lan_ips():
