@@ -44,4 +44,5 @@ dist/*.zip
 !skills/dist/*.zip
 *.tar.gz
 
+# generated self-check reports
 mcp_server/reports/
