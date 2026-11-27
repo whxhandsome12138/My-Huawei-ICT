@@ -1,11 +1,14 @@
-# 数据：从哪来、怎么放、为什么不在仓库里
+# 数据：从哪来、怎么放、为什么不进 Git 历史
 
 ## 一句话
 
-**本仓库不含 KIMORE 原始数据**。你需要自己下载，放到 `mcp_server` 能读到的位置；
+**数据不在 Git 里，但可以从 Release 直接下载**（经数据集作者同意再分发）：
+
+**https://github.com/whxhandsome12138/My-Huawei-ICT/releases/tag/data-v1.0**
+
 不想下载也能跑——仓库自带的 `fixtures/` 足够演示与自检。
 
-**拿到副本后先对一下哈希**（`data/SHA256SUMS.txt`），确认和大家用的是同一份数据：
+**下载后先对一下哈希**（`data/SHA256SUMS.txt`），确认和大家用的是同一份数据：
 
 ```bash
 sha256sum -c data/SHA256SUMS.txt      # Linux / macOS
@@ -19,10 +22,10 @@ python tools/check_data.py --root <放 zip 的目录>   # 跨平台，逐条报�
 | `archive.zip` | 178 MB | 精简包（只有骨架与标签，顶层 `Kimore/`） | `ea1569e9` |
 | `draftKIMORE.pdf` | 1.9 MB | 论文草稿（口径依据） | `18db6903` |
 
-**为什么这三个大文件不在仓库里**：GitHub 单文件硬上限 100 MB，作者包 1.81 GB / 1.67 GB
-连 push 都过不去；免费 Git LFS 只有 1 GB 额度，两个包合计 3.5 GB。另外数据集的使用条款
-不允许二次分发，论文草稿的版权在 IEEE 与作者。所以仓库保留的是**可验证的引用**（哈希 + 结构 +
-获取方式），不是二进制本身。详见 [`data/README.md`](../data/README.md)。
+**为什么走 Release 而不是 `git add`**：GitHub 单文件硬上限 100 MB，作者包 1.81 GB / 1.67 GB
+连 push 都过不去；免费 Git LFS 只有 1 GB 额度，两个包合计 3.5 GB。Release 附件单文件上限 2 GiB，
+正好放得下，而且不拖慢 `git clone`——克隆代码几秒钟，要数据的人再单独下。
+授权与使用范围见 [`data/README.md`](../data/README.md) 与 [`NOTICE`](../NOTICE)（仅科研与教学，需引用原文）。
 
 ---
 

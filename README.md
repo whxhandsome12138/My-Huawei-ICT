@@ -90,24 +90,35 @@ cd nexent && bash deploy.sh docker --image-source mainland
 
 ## 数据从哪来（重要）
 
-本仓库**不包含** KIMORE 原始数据。原因是一条硬约束加一条软约束：
+本仓库的 Git 历史里**不放** KIMORE 原始数据，它放在 Release 附件里（**经数据集作者同意再分发**）：
 
-- **体积**：作者包 `CG` 1.81 GB、`GPP` 1.67 GB，合计 3.5 GB。GitHub 单文件硬上限 100 MB，
-  免费 Git LFS 只有 1 GB 额度——塞不进去，硬推会被直接拒收。
-- **许可**：数据集的使用条款不允许二次分发；论文（IEEE TNSRE 2019）版权在 IEEE 与作者，
-  我们只引用、不再分发。
+**https://github.com/whxhandsome12138/My-Huawei-ICT/releases/tag/data-v1.0**
 
-所以仓库给的是**可验证的引用**：`data/SHA256SUMS.txt` 记录四个文件的 SHA256 与字节数，
-`tools/check_data.py` 拿来就能校验你手上那份是不是同一份，`data/README.md` 写清获取途径与摆放结构。
+| 文件 | 大小 | 说明 |
+| :-- | --: | :-- |
+| `CG-….zip` | 1.81 GB | 健康组作者包（含作者 MATLAB 脚本与深度 AVI） |
+| `GPP-….zip` | 1.67 GB | 患者组作者包（`BackPain` / `Stroke` / `Parkinson`） |
+| `archive.zip` | 178 MB | 精简包（只有骨架 + 标签），只要跑服务下这个就够 |
+| `draftKIMORE.pdf` | 1.9 MB | 论文草稿（口径依据） |
+| `SHA256SUMS.txt` | 1 KB | 上述文件的 SHA256 |
 
-请自行前往论文作者提供的渠道下载，并遵守其条款：
+为什么走 Release 不走 `git add`：Git 单文件硬上限 100 MB，`CG`/`GPP` 合计 3.5 GB 会被直接拒收；
+免费 Git LFS 只有 1 GB 额度；Release 附件单文件上限 2 GiB，正好放得下，也不拖慢 `git clone`。
+
+下载后先校验，再按 [`docs/DATA.md`](docs/DATA.md) 摆放：
+
+```bash
+sha256sum -c SHA256SUMS.txt                       # Linux / macOS
+python tools/check_data.py --root <放 zip 的目录>   # 跨平台，逐条报通过/缺失/大小不符/哈希不符
+```
+
+引用：
 
 > Capecci M, Ceravolo M G, Ferracuti F, et al. **The KIMORE dataset: KInematic assessment of
 > MOvements and clinical scores for telerehabilitation of low back pain.** *IEEE Transactions on
 > Neural Systems and Rehabilitation Engineering*, 2019, 27(7): 1436–1448.
 
-拿到数据后先 `python tools/check_data.py --root <目录>` 对哈希，再按 [`docs/DATA.md`](docs/DATA.md)
-摆放目录，`mcp_server` 会自动索引。仓库里带的 `mcp_server/fixtures/` 是**脱敏后的工具返回值**，
+数据仅用于科研与教学。仓库里带的 `mcp_server/fixtures/` 是**脱敏后的工具返回值**，
 用于离线演示与自检，不是原始骨架。
 
 ---
