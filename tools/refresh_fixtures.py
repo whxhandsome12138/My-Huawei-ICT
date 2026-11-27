@@ -10,10 +10,10 @@ fixture 会变成旧值。用这个脚本对着真实服务跑一遍，把 fixtu
     python tools/refresh_fixtures.py --host 192.168.138.1 --port 8001
 
     # 只看会变什么，不落盘
-    python tools/refresh_fixtures.py --host 127.0.0.1 --port 9300 --dry-run
+    python tools/refresh_fixtures.py --host 127.0.0.1 --port 9700 --dry-run
 
     # 抓完顺手跑自检
-    python tools/refresh_fixtures.py --host 127.0.0.1 --port 9300 --verify
+    python tools/refresh_fixtures.py --host 127.0.0.1 --port 9700 --verify
 
 抓取顺序与 fixtures/INDEX.json 一一对应。凡是服务返回的东西都原样保存，
 不做任何加工——这个脚本的职责只是搬运。

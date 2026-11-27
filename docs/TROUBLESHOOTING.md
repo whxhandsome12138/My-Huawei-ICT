@@ -137,21 +137,21 @@ ERROR: [Errno 13] error while attempting to bind on address ('0.0.0.0', 9100):
 netsh int ipv4 show excludedportrange protocol=tcp
 ```
 
-如果 9100 落在某个区间里，换个区间外的端口即可（本机部署实际用的是 **9300**）：
+如果 9100 落在某个区间里，换个区间外的端口即可（本机部署实际用的是 **9700**）：
 
 ```powershell
-python server.py --host 0.0.0.0 --port 9300
-python selfcheck.py --port 9300
+python server.py --host 0.0.0.0 --port 9700
+python selfcheck.py --port 9700
 ```
 
 ---
 
 ## 11. `/sse` 返回 502 Bad Gateway（本机自检失败，但 curl 正常）
 
-现象：`curl http://127.0.0.1:9300/sse` 能拿到 `event: endpoint`，但 `selfcheck.py` 抛
+现象：`curl http://127.0.0.1:9700/sse` 能拿到 `event: endpoint`，但 `selfcheck.py` 抛
 
 ```
-httpx.HTTPStatusError: Server error '502 Bad Gateway' for url 'http://127.0.0.1:9300/sse'
+httpx.HTTPStatusError: Server error '502 Bad Gateway' for url 'http://127.0.0.1:9700/sse'
 ```
 
 原因是机器上开着系统代理（Clash / 公司代理，WinINET 里 `ProxyEnable=1`），

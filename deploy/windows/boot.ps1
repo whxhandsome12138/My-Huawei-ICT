@@ -6,8 +6,8 @@
 
 param(
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent),
-    [int]$McpPort = 9300,
-    [int]$DemoPort = 9301,
+    [int]$McpPort = 9700,
+    [int]$DemoPort = 9701,
     [int]$ForwardPort = 0,
     [string]$ForwardTarget = "",
     [string]$Vmx = "",

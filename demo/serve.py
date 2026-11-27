@@ -2,14 +2,14 @@
 """把演示页发布成一个可分享的链接（零依赖静态服务）。
 
 用法：
-    python serve.py                 # 默认 9301 端口，自动打开浏览器
+    python serve.py                 # 默认 9701 端口，自动打开浏览器
     python serve.py --port 8080 --no-browser
 
 别人只要在浏览器里打开打印出来的地址即可，不需要装任何东西。
 无控制台启动（pythonw）时不会因为 print 到 None 而崩，日志静默丢弃。
 
 端口说明：Windows 上 3000 / 9100 常被 Hyper-V 或 VMware 的保留段占掉
-（`netsh int ipv4 show excludedportrange protocol=tcp` 可查），所以默认用 9301。
+（`netsh int ipv4 show excludedportrange protocol=tcp` 可查），所以默认用 9701。
 """
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ def lan_ips() -> list[str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=9301)
+    ap.add_argument("--port", type=int, default=9701)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--no-browser", action="store_true")
     args = ap.parse_args()

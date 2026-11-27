@@ -3,7 +3,9 @@ rem Serve the static demo page (demo/serve.py) without a console window.
 rem ASCII + CRLF on purpose: cmd silently fails on LF-only line endings.
 setlocal
 set "ROOT=%~dp0..\.."
-if "%DEMO_PORT%"=="" set "DEMO_PORT=9301"
+if "%DEMO_PORT%"=="" set "DEMO_PORT=9701"
+rem Optional first argument overrides the port (the watchdog passes its -DemoPort in).
+if not "%~1"=="" set "DEMO_PORT=%~1"
 
 set "PYW="
 if exist "%ROOT%\.venv\Scripts\pythonw.exe" set "PYW=%ROOT%\.venv\Scripts\pythonw.exe"
