@@ -118,3 +118,50 @@ python tools/ensure_ps1_bom.py
 | 9101 | 演示页 `serve.py` |
 
 改端口：`python server.py --port 9110`，然后 **Nexent 里的 URL 也要跟着改**，改完点 ⟳ 复验。
+
+---
+
+## 10. 绑定 9100 报 `[winerror 10013]`
+
+现象：`server.py --port 9100` 起不来，日志里是
+
+```
+ERROR: [Errno 13] error while attempting to bind on address ('0.0.0.0', 9100):
+[winerror 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。
+```
+
+不是权限问题，是 **Windows 把这段端口保留了**（Hyper-V / WSL / Docker Desktop 开启后会占走大段端口）。
+先看一眼：
+
+```powershell
+netsh int ipv4 show excludedportrange protocol=tcp
+```
+
+如果 9100 落在某个区间里，换个区间外的端口即可（本机部署实际用的是 **9300**）：
+
+```powershell
+python server.py --host 0.0.0.0 --port 9300
+python selfcheck.py --port 9300
+```
+
+---
+
+## 11. `/sse` 返回 502 Bad Gateway（本机自检失败，但 curl 正常）
+
+现象：`curl http://127.0.0.1:9300/sse` 能拿到 `event: endpoint`，但 `selfcheck.py` 抛
+
+```
+httpx.HTTPStatusError: Server error '502 Bad Gateway' for url 'http://127.0.0.1:9300/sse'
+```
+
+原因是机器上开着系统代理（Clash / 公司代理，WinINET 里 `ProxyEnable=1`），
+httpx 会**读代理设置并把回环请求也转给代理**，代理不认识这个目标，回 502。
+
+`selfcheck.py` 已内置兜底（自动把 `127.0.0.1` / `localhost` 加进 `NO_PROXY`）。
+如果自己写的客户端也遇到，手动加一句：
+
+```powershell
+$env:NO_PROXY = "127.0.0.1,localhost"
+```
+
+不用关代理，也不影响别的程序。

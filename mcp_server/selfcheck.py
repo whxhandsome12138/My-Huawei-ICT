@@ -24,6 +24,15 @@ from typing import Any, Awaitable, Callable
 from mcp import ClientSession
 from mcp.client.sse import sse_client
 
+# 本机若开着系统代理（Windows WinINET / 企业代理），httpx 会读环境后把 127.0.0.1 的请求
+# 也转给代理，表现是 /sse 返回 502 Bad Gateway。这里默认把回环地址排除，不动用户的代理设置。
+_no_proxy = os.environ.get("NO_PROXY") or os.environ.get("no_proxy") or ""
+for _host in ("127.0.0.1", "localhost"):
+    if _host not in _no_proxy:
+        _no_proxy = f"{_no_proxy},{_host}" if _no_proxy else _host
+os.environ["NO_PROXY"] = _no_proxy
+os.environ["no_proxy"] = _no_proxy
+
 FULL = "Es2-467acf3acb6a8191d6ef"
 SECOND = "Es2-fbab3ba3e46a4ea94233"
 
