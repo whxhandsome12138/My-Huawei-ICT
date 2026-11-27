@@ -108,7 +108,7 @@ def main() -> int:
         "```",
         "",
     ]
-    REPORT.write_text("\n".join(lines), encoding="utf-8")
+    REPORT.write_text("\n".join(lines), encoding="utf-8", newline="\n")
 
     for name, passed in expectations:
         print(f"[{'PASS' if passed else 'FAIL'}] {name}")

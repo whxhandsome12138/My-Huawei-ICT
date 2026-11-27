@@ -1,6 +1,6 @@
 """从真实 MCP 服务重新抓取 fixtures。
 
-用途：B 发布新的接口版本（例如 1.1.0 修正左侧符号）后，回放服务里的 9 个
+用途：B 发布新的接口版本（例如 1.0.0 修正左侧符号）后，回放服务里的 9 个
 fixture 会变成旧值。用这个脚本对着真实服务跑一遍，把 fixtures/*.json 整体刷新，
 回放服务与自检脚本就自动跟上新契约，不用手改任何数字。
 
@@ -41,7 +41,9 @@ CAPTURE_PLAN = [
     ("real_assess_success.json", "assess_exercise", {"sample_id": FULL}),
     ("real_assess_observed_label.json", "assess_exercise",
      {"sample_id": FULL, "mode": "observed_label"}),
+    ("real_assess_second.json", "assess_exercise", {"sample_id": SECOND}),
     ("real_explain_deviation.json", "explain_deviation", {"sample_id": FULL}),
+    ("real_explain_second.json", "explain_deviation", {"sample_id": SECOND}),
     ("real_query_criteria.json", "query_criteria", {"exercise_id": "Es2"}),
     ("real_plan_session.json", "plan_session", {"sample_ids": [FULL, SECOND]}),
     ("real_error_sample_not_found.json", "assess_exercise",
@@ -71,11 +73,13 @@ def diff_summary(old: dict, new: dict) -> list[str]:
     out = []
     if old.get("status") != new.get("status"):
         out.append(f"status {old.get('status')} -> {new.get('status')}")
-    ov = {f["feature_id"]: f["value"]
-          for f in (old.get("data", {}).get("features") or [])
+    # query_criteria 的 features 是口径描述，没有 value 键；用 get 避免 KeyError
+    # 错误响应的 data 是 null，不能直接 .get；query_criteria 的 features 也没有 value 键
+    ov = {f["feature_id"]: f.get("value")
+          for f in ((old.get("data") or {}).get("features") or [])
           if isinstance(f, dict) and "feature_id" in f}
-    nv = {f["feature_id"]: f["value"]
-          for f in (new.get("data", {}).get("features") or [])
+    nv = {f["feature_id"]: f.get("value")
+          for f in ((new.get("data") or {}).get("features") or [])
           if isinstance(f, dict) and "feature_id" in f}
     for k in sorted(set(ov) & set(nv)):
         if ov[k] != nv[k]:
@@ -111,7 +115,7 @@ async def capture(host: str, port: int, dry: bool) -> int:
                 changes = diff_summary(old, env)
                 payload = json.dumps(env, ensure_ascii=False, indent=2) + "\n"
                 if not dry and payload != (path.read_text(encoding="utf-8") if path.exists() else None):
-                    path.write_text(payload, encoding="utf-8")
+                    path.write_text(payload, encoding="utf-8", newline="\n")
                 tag = "changed" if changes else "same"
                 if changes:
                     changed += 1
