@@ -61,7 +61,7 @@
 
 复算脚本 `tools/verify_b_features.py`，结果 `tools/verify_b_features.json`。样本反查：1664 帧唯一命中 `Kimore/CG/Expert/E_ID1/Es2/Raw/JointPosition011214_103845.csv`（shape 1664×100）。
 
-| 特征 | B 1.0.0 返回值 | 本项目复算（已修正） | 差 | 判定 |
+| 特征 | B 0.1.0 返回值（11-24 交付） | 本项目复算（已修正） | 差 | 判定 |
 | :-- | --: | --: | --: | :-- |
 | `torso_tilt_left_range` | 37.489 | 37.5079 | +0.019 | 一致 |
 | `torso_tilt_right_range` | 32.478 | 32.4892 | +0.011 | 一致 |
@@ -69,7 +69,7 @@
 | `knee_angle_left_median` | 166.161 | 166.1415 | −0.019 | 一致 |
 | `shoulder_distance_median` | 0.283 | 0.28257 | −0.0004 | 一致 |
 | `repetition_count_left` | 6 | 6（峰）/ 6（谷） | 0 | 一致 |
-| `torso_tilt_left_peak` | −26.497 | **+26.5182**（左信号极大） | 幅度差 0.021 | B 1.0.0 偏差（左侧未取负） |
+| `torso_tilt_left_peak` | −26.497 | **+26.5182**（左信号极大） | 幅度差 0.021 | B 0.1.0 偏差（左侧未取负），1.0.0 已修正 |
 | `torso_tilt_right_peak` | +20.901 | **+20.9116**（右信号极大） | 幅度差 0.011 | 一致 |
 | `repetition_count_right` | 6 | 6（峰）/ 5（谷） | 0 | 一致 |
 
@@ -89,7 +89,7 @@ angolobustoR =  filtering(angolobustoR);   % 右：不取负
 实际是只差左侧一个负号。修正后的复算脚本见 `tools/verify_features.py`（按侧判断是否取负）。
 
 **最终口径（以论文与作者脚本为准）**：每个特征的正值表示**向该特征对应的那一侧偏离**
-（左特征正 = 向左，右特征正 = 向右）。B 侧按此改实现，随 1.1.0 发布；本体里
+（左特征正 = 向左，右特征正 = 向右）。B 侧按此改实现，随 1.0.0 发布；本体里
 `sign_left_positive` / `sign_right_positive` 两个 `SignConvention` 个体同步。
 
 > 补充一个工程观察（不是论文规定）：两侧信号存在约 **+18.6°** 的相机几何偏置
@@ -109,7 +109,7 @@ angolobustoR =  filtering(angolobustoR);   % 右：不取负
 早先「右 5 vs B 6」的差异，是因为对右侧取负后数的是**谷**，不是峰。修正后两侧峰数都是 6，
 与 B 一致，原先「MATLAB `findpeaks` 与 scipy `find_peaks` 对平台段处理不同」的归因不成立。
 
-**收口方式（已与 B 约定，随 1.1.0 发布）**：论文只说「每个动作连续做 5 次」，那是**协议要求**；
+**收口方式（已与 B 约定，随 1.0.0 发布）**：论文只说「每个动作连续做 5 次」，那是**协议要求**；
 算法数出来的是**描述量**。两个都给，不混用：
 
 ```json

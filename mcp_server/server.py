@@ -40,26 +40,12 @@ SAMPLE_RE = re.compile(r"^Es[1-5]-[0-9a-f]{20}$")
 EXERCISE_RE = re.compile(r"^Es[0-9]+$")
 
 SERVER_NAME = "exercise-assessment-kimore-replay"
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "1.0.0"
 
 # 真实服务当前唯一支持的样本（B 的交付包只给了这一条 assess / explain 明细）
 FULL_SAMPLE = "Es2-467acf3acb6a8191d6ef"
-# 第二条真实样例：只有 README 里的 10 个特征与 plan_session 记录，没有完整 17 特征响应
+# 第二条真实样例：1.0.0 起由真实服务抓取完整 17 特征（fixtures/real_assess_second.json）
 SECOND_SAMPLE = "Es2-fbab3ba3e46a4ea94233"
-
-SECOND_SAMPLE_VALUES = {
-    "torso_tilt_left_peak": -24.422,
-    "torso_tilt_right_peak": 22.099,
-    "torso_tilt_left_range": 25.653,
-    "torso_tilt_right_range": 27.374,
-    "torso_tilt_left_excursion_up": 12.350,
-    "torso_tilt_right_excursion_up": 13.295,
-    "elbow_angle_left_median": 152.884,
-    "knee_angle_left_median": 164.812,
-    "shoulder_distance_median": 0.292,
-    "repetition_count_left": 4.0,
-    "repetition_count_right": 4.0,
-}
 
 # 清单里可见、但没有明细响应的样本（list_samples 的 5 条）
 KNOWN_LISTED = {
@@ -138,55 +124,9 @@ def partial_like(env: dict, warning: str) -> dict:
     return env
 
 
-def second_sample_features() -> list[dict]:
-    feats = criteria_features()
-    out = []
-    for fid, value in SECOND_SAMPLE_VALUES.items():
-        meta = feats.get(fid, {})
-        out.append(
-            {
-                "feature_id": fid,
-                "display_name": meta.get("display_name", fid),
-                "value": value,
-                "unit": meta.get("unit", "degree"),
-                "status": "ok",
-                "reason": None,
-                "joints": meta.get("joints", []),
-                "source_frame_index": None,
-                "time_s": None,
-                "evidence_level": meta.get("evidence_level", "derived_engineering"),
-                "vertical_reference_independent": meta.get("vertical_reference_independent", True),
-            }
-        )
-    return out
-
-
-def partial_second_sample() -> dict:
-    """第二条真实样例：用 README 公开的 10 个特征值构造 partial，缺失 7 个特征。"""
-    env = serve("real_assess_success.json", coverage="derived", note="样本 #2 的 10/17 特征取自 B 的 README 预期值")
-    data = env["data"]
-    data["sample_id"] = SECOND_SAMPLE
-    data["assessment_id"] = "17bfb7dc3544939e"  # 与 plan_session 记录一致
-    data["mode"] = "kinematics"
-    data["quality"] = {"status": "pass", "n_frames": 587, "valid_frames": 586, "valid_frame_ratio": 0.9983, "reasons": []}
-    data["observed_label"] = {
-        "cTS": 16.0,
-        "cPO": 5.0,
-        "cCF": 11.0,
-        "label_kind": "historical_clinician",
-        "label_level": "subject_exercise",
-        "note": "历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。",
-    }
-    data["features"] = second_sample_features()
-    data["deviations"] = []
-    data["reference"] = None
-    env["status"] = "partial"
-    env["warnings"].append(
-        "【回放模式】该样本仅有 10/17 个特征的公开数值，其余特征与偏离判定置空；"
-        "线上联调会用真实服务补齐。"
-    )
-    env["provenance"]["replay"]["note"] = "10/17 特征取自 README_FOR_C.md，缺失项置空"
-    return env
+def second_sample_response() -> dict:
+    """第二条真实样例：1.0.0 的完整响应，由真实服务抓取。"""
+    return serve("real_assess_second.json")
 
 
 mcp = FastMCP(
@@ -261,7 +201,7 @@ def assess_exercise(
                 "note": "历史临床评分，受试者×动作粒度，不是本次录制或单次重复的分数。",
             }
             return env
-        return partial_second_sample()
+        return second_sample_response()
     if sid in KNOWN_LISTED:
         env = serve("real_assess_success.json", coverage="absent", note="该样本在清单中可见，但交付包未提供其明细响应")
         data = env["data"]
@@ -287,10 +227,7 @@ def explain_deviation(sample_id: str, feature_id: str | None = None) -> dict:
     if sid == FULL_SAMPLE:
         env = serve("real_explain_deviation.json")
     elif sid == SECOND_SAMPLE:
-        env = serve("real_explain_deviation.json", coverage="derived", note="样本 #2 无偏离明细")
-        env["data"]["sample_id"] = SECOND_SAMPLE
-        env["data"]["evidence"] = []
-        env = partial_like(env, "【回放模式】样本 #2 未随交付包提供偏离明细，仅验证 partial 消费路径。")
+        env = serve("real_explain_second.json")
     elif sid in KNOWN_LISTED:
         env = serve("real_explain_deviation.json", coverage="absent", note="该样本无明细")
         env["data"]["sample_id"] = sid
@@ -298,6 +235,12 @@ def explain_deviation(sample_id: str, feature_id: str | None = None) -> dict:
         env = partial_like(env, "【回放模式】该样本只有清单条目，无偏离明细。")
     else:
         return serve("real_error_sample_not_found.json")
+    if feature_id and feature_id not in criteria_features():
+        # 真实服务对未知 feature_id 返回业务错误，而不是空证据
+        return business_error(
+            "FEATURE_UNAVAILABLE",
+            "该样本没有这个 feature_id；可用值见 assess_exercise 的 features。",
+        )
     if feature_id:
         data = env.get("data") or {}
         kept = [item for item in data.get("evidence", []) if item.get("feature_id") == feature_id]

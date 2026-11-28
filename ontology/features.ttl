@@ -44,7 +44,7 @@ kimore:feature_torso_tilt_left_peak a owl:NamedIndividual, kimore:Feature ;
     kimore:verticalReferenceIndependent false ;
     kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
-    rdfs:comment "作者第 26 行对左侧取负，右侧（第 27 行）不取负，本项目统一为左负右正。"@zh .
+    rdfs:comment "作者第 26 行对左侧取负、第 27 行对右侧不取负；因此两侧统一为『正值 = 向该侧偏离』，左峰正值表示向受试者左侧。"@zh .
 kimore:feature_torso_tilt_right_peak a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "右侧躯干额状面峰值倾角"@zh ;
     kimore:featureId "torso_tilt_right_peak" ;
@@ -57,7 +57,7 @@ kimore:feature_torso_tilt_right_peak a owl:NamedIndividual, kimore:Feature ;
     kimore:verticalReferenceIndependent false ;
     kimore:hasSignConvention kimore:sign_right_positive ;
     kimore:version "1.0" ;
-    rdfs:comment "与左侧反号是作者原始实现的一部分，不是笔误。"@zh .
+    rdfs:comment "作者第 27 行对右侧不取负；正值为向受试者右侧偏离，与左峰同一规则。"@zh .
 kimore:feature_torso_tilt_left_range a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "左侧躯干倾角活动范围"@zh ;
     kimore:featureId "torso_tilt_left_range" ;
@@ -67,10 +67,9 @@ kimore:feature_torso_tilt_left_range a owl:NamedIndividual, kimore:Feature ;
     kimore:hasSourceLine "feat_extract_Ex2.m:29,30,60,61,62" ;
     kimore:aggregation "max-minus-min" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "左侧信号丢前 30 帧后再取极差。"@zh .
+    rdfs:comment "左侧信号丢前 29 帧后再取极差；整段平移不改变极差，故与竖直轴偏置无关，也不带符号约定。"@zh .
 kimore:feature_torso_tilt_right_range a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "右侧躯干倾角活动范围"@zh ;
     kimore:featureId "torso_tilt_right_range" ;
@@ -80,10 +79,9 @@ kimore:feature_torso_tilt_right_range a owl:NamedIndividual, kimore:Feature ;
     kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
     kimore:aggregation "max-minus-min" ;
     kimore:usesJoint "ShoulderRight" , "HipRight" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "右侧信号不丢前 30 帧，与左侧不对称。"@zh .
+    rdfs:comment "右侧信号同样丢前 29 帧（作者第 29-30 行对两侧都截断）；整段平移不改变极差，故与竖直轴偏置无关，也不带符号约定。"@zh .
 kimore:feature_elbow_angle_left_median a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "左肘关节角度中位数"@zh ;
     kimore:featureId "elbow_angle_left_median" ;
@@ -178,9 +176,8 @@ kimore:feature_repetition_count_left a owl:NamedIndividual, kimore:Feature ;
     kimore:aggregation "count" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
     kimore:verticalReferenceIndependent true ;
-    kimore:hasSignConvention kimore:sign_left_positive ;
     kimore:version "1.0" ;
-    rdfs:comment "MATLAB findpeaks 与 scipy find_peaks 在平台段不等价，v1 只用于『是否完成 5 次』二值判断。"@zh .
+    rdfs:comment "峰计数按作者参数（height=mean、distance=⌊n/10⌋）；原先 6 对 5 的差异经复核源于右侧多取一次负号，与平台段处理无关。计数是非负量，不带符号约定。"@zh .
 kimore:feature_repetition_count_right a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "右侧动作重复次数"@zh ;
     kimore:featureId "repetition_count_right" ;
@@ -191,9 +188,8 @@ kimore:feature_repetition_count_right a owl:NamedIndividual, kimore:Feature ;
     kimore:aggregation "count" ;
     kimore:usesJoint "ShoulderRight" , "HipRight" ;
     kimore:verticalReferenceIndependent true ;
-    kimore:hasSignConvention kimore:sign_right_positive ;
     kimore:version "1.0" ;
-    rdfs:comment "同上，右侧。"@zh .
+    rdfs:comment "同上，右侧；计数是非负量，不带符号约定。"@zh .
 kimore:feature_torso_tilt_left_excursion_up a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "左侧躯干上向偏移"@zh ;
     kimore:featureId "torso_tilt_left_excursion_up" ;
@@ -203,10 +199,9 @@ kimore:feature_torso_tilt_left_excursion_up a owl:NamedIndividual, kimore:Featur
     kimore:hasSourceLine "feat_extract_Ex2.m:60,61,62" ;
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "相对首个极值的上向偏移，依赖未标定的相机竖直轴。"@zh .
+    rdfs:comment "max − median（相对自身中位）：整段平移同时抬高 max 与 median，差值不变，故与竖直轴偏置无关，非负量不带符号约定。"@zh .
 kimore:feature_torso_tilt_left_excursion_down a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "左侧躯干下向偏移"@zh ;
     kimore:featureId "torso_tilt_left_excursion_down" ;
@@ -216,10 +211,9 @@ kimore:feature_torso_tilt_left_excursion_down a owl:NamedIndividual, kimore:Feat
     kimore:hasSourceLine "feat_extract_Ex2.m:60,61,62" ;
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderLeft" , "HipLeft" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_left_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "相对首个极值的下向偏移。"@zh .
+    rdfs:comment "median − min：整段平移同时抬高 median 与 min，差值不变，故与竖直轴偏置无关，非负量不带符号约定。"@zh .
 kimore:feature_torso_tilt_right_excursion_up a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "右侧躯干上向偏移"@zh ;
     kimore:featureId "torso_tilt_right_excursion_up" ;
@@ -229,10 +223,9 @@ kimore:feature_torso_tilt_right_excursion_up a owl:NamedIndividual, kimore:Featu
     kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderRight" , "HipRight" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "同上，右侧。"@zh .
+    rdfs:comment "同上，右侧；整段平移不改变该差值。"@zh .
 kimore:feature_torso_tilt_right_excursion_down a owl:NamedIndividual, kimore:Feature ;
     rdfs:label "右侧躯干下向偏移"@zh ;
     kimore:featureId "torso_tilt_right_excursion_down" ;
@@ -242,7 +235,6 @@ kimore:feature_torso_tilt_right_excursion_down a owl:NamedIndividual, kimore:Fea
     kimore:hasSourceLine "feat_extract_Ex2.m:41,42,43" ;
     kimore:aggregation "max-of-diff" ;
     kimore:usesJoint "ShoulderRight" , "HipRight" ;
-    kimore:verticalReferenceIndependent false ;
-    kimore:hasSignConvention kimore:sign_right_positive ;
+    kimore:verticalReferenceIndependent true ;
     kimore:version "1.0" ;
-    rdfs:comment "同上，右侧。"@zh .
+    rdfs:comment "同上，右侧；整段平移不改变该差值。"@zh .

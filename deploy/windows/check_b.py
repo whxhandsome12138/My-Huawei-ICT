@@ -59,7 +59,7 @@ def layer2_sse(host: str, port: int) -> bool:
         os.environ[k] = ",".join(filter(None, [os.environ.get(k, ""), "127.0.0.1", "localhost", host]))
     req = urllib.request.Request(
         f"http://{host}:{port}/sse",
-        headers={"Accept": "text/event-stream", "Host": host},
+        headers={"Accept": "text/event-stream", "Host": f"{host}:{port}"},
     )
     try:
         with urllib.request.urlopen(req, timeout=8) as r:

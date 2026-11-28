@@ -1,11 +1,19 @@
 {
-  "schema_version": "0.1.0",
-  "request_id": "d99ce14e-9ce5-413a-9450-bffc6e2014ea",
+  "schema_version": "1.0.0",
+  "request_id": "41401d9f-6d1b-43e3-94e5-fff38ffd6432",
   "status": "ok",
   "data": {
     "exercise_id": "Es2",
     "display_name": "躯干侧倾（双臂上举持杆）",
     "paper_locator": "Capecci et al. 2019, IEEE TNSRE 27(7):1436-1448, p. 1441, section II.D",
+    "sign_convention": {
+      "rule": "positive = deviation towards that side",
+      "left": "torso_tilt_left_* positive means deviation towards the subject's left",
+      "right": "torso_tilt_right_* positive means deviation towards the subject's right",
+      "basis": "feat_extract_Ex2.m:26 negates the left series and :27 leaves the right one unchanged, which makes one rule cover both sides; Kinect +x points to the subject's right, measured as ShoulderRight.x - ShoulderLeft.x > 0",
+      "verified_against_video": false,
+      "caution": "the absolute angle carries an uncalibrated camera-geometry offset; use torso_tilt_*_range and *_excursion_* for direction-free amplitude"
+    },
     "expected_repetitions": 5,
     "expected_repetitions_locator": "p. 1441, section II.D (each exercise is performed five consecutive times)",
     "features": [
@@ -273,9 +281,11 @@
     "source_type": "recorded_kinect",
     "capture_mode": "offline_replay",
     "dataset_version": "unverified",
-    "pipeline_version": "0.1.0",
-    "feature_method_version": "es2-kinematics-wp3.1",
-    "criteria_version": "0.1.0",
+    "code_version": "kimore-kernel@1.0.0",
+    "reference_n": null,
+    "pipeline_version": "0.2.0",
+    "feature_method_version": "es2-kinematics-wp3.2",
+    "criteria_version": "0.2.0",
     "reference_version": null,
     "source_record": null,
     "source_hash": null
