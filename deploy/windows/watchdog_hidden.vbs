@@ -1,21 +1,26 @@
 ' Launch watchdog.ps1 with NO console window (task scheduler friendly).
-' Usage: wscript.exe //nologo watchdog_hidden.vbs [McpPort] [DemoPort]
+' Usage: wscript.exe //nologo watchdog_hidden.vbs [McpPort] [DemoPort] [ForwardPort] [ForwardTarget]
 ' Why: a scheduled task that runs powershell.exe directly flashes a console
 ' window every time it fires. WScript.Shell.Run with window style 0 avoids it.
 Option Explicit
 
-Dim sh, fso, here, ps, mcp, demo
+Dim sh, fso, here, ps, mcp, demo, fwd, target
 Set sh  = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 
-here = fso.GetParentFolderName(WScript.ScriptFullName)
-mcp  = "9700"
-demo = "9701"
-If WScript.Arguments.Count >= 1 Then mcp  = WScript.Arguments(0)
-If WScript.Arguments.Count >= 2 Then demo = WScript.Arguments(1)
+here   = fso.GetParentFolderName(WScript.ScriptFullName)
+mcp    = "9700"
+demo   = "9701"
+fwd    = "3300"
+target = "192.168.138.128:3000"
+If WScript.Arguments.Count >= 1 Then mcp    = WScript.Arguments(0)
+If WScript.Arguments.Count >= 2 Then demo   = WScript.Arguments(1)
+If WScript.Arguments.Count >= 3 Then fwd    = WScript.Arguments(2)
+If WScript.Arguments.Count >= 4 Then target = WScript.Arguments(3)
 
 ps = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File """ & here & "\watchdog.ps1""" & _
-     " -McpPort " & mcp & " -DemoPort " & demo
+     " -McpPort " & mcp & " -DemoPort " & demo & _
+     " -ForwardPort " & fwd & " -ForwardTarget " & target
 
 ' 0 = hidden, False = do not wait
 sh.Run ps, 0, False

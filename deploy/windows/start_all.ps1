@@ -113,15 +113,17 @@ if ($SkipVm) {
     }
 }
 
-# ---------- 3. MCP + 演示页 ----------
-Log '[3/4] 检查 MCP / 演示页…'
+# ---------- 3. MCP + 演示页 + 3300 转发 ----------
+Log '[3/4] 检查 MCP / 演示页 / 转发…'
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $WinDir 'watchdog.ps1') `
-    -McpPort $McpPort -DemoPort $DemoPort | Out-Null
+    -McpPort $McpPort -DemoPort $DemoPort -ForwardPort $ForwardPort | Out-Null
 Start-Sleep -Seconds 3
 $mcpOk  = Test-Port '127.0.0.1' $McpPort
 $demoOk = Test-Port '127.0.0.1' $DemoPort
 Log ("      MCP {0}: {1}" -f $McpPort, $(if ($mcpOk) { 'OK' } else { '未起来' })) $(if ($mcpOk) { 'Green' } else { 'Red' })
 Log ("      演示页 {0}: {1}" -f $DemoPort, $(if ($demoOk) { 'OK' } else { '未起来' })) $(if ($demoOk) { 'Green' } else { 'Red' })
+$fwdOk = Test-Port '127.0.0.1' $ForwardPort
+Log ("      转发 {0}: {1}" -f $ForwardPort, $(if ($fwdOk) { 'OK' } else { '未起来（虚拟机没开时属正常）' })) $(if ($fwdOk) { 'Green' } else { 'Yellow' })
 
 # ---------- 4. 3300 转发 ----------
 Log '[4/4] 检查 3300 转发…'
